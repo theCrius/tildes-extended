@@ -7,12 +7,19 @@
     "permissions": [
       "storage",
       "unlimitedStorage",
-      "tabs",
-      "*://www.tildes.net/*"
+      "activeTab",
+      "https://tildes.net/*"
     ],
     "icons": {
       "48": "images/tildes-extended.png"
     },
+
+    "content_scripts": [
+      {
+        "matches": ["*://tildes.net/*"],
+        "js": ["scripts/link-new-tab.js"]
+      }
+    ],
 
     "browser_action": {
         "default_icon": {
