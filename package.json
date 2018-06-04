@@ -1,0 +1,24 @@
+{
+  "name": "tildes-extended",
+  "version": "0.1.0",
+  "description": "Collection of QoL features for Tildes.net",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "latest",
+    "gulp": "latest",
+    "gulp-clean": "latest",
+    "gulp-cleanhtml": "latest",
+    "gulp-eslint": "latest",
+    "gulp-strip-debug": "latest",
+    "gulp-uglify-es": "latest",
+    "gulp-zip": "latest"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "serve": "gulp watch",
+    "build": "gulp"
+  },
+  "author": "Claudio Vallesi",
+  "license": "ISC"
+}
