@@ -4,11 +4,12 @@
   "description": "Collection of QoL features for Tildes.net",
   "main": "index.js",
   "devDependencies": {
+    "del": "^3.0.0",
     "eslint": "latest",
     "gulp": "latest",
-    "gulp-clean": "latest",
     "gulp-cleanhtml": "latest",
     "gulp-eslint": "latest",
+    "gulp-sass": "^4.0.1",
     "gulp-strip-debug": "latest",
     "gulp-uglify-es": "latest",
     "gulp-zip": "latest"
@@ -20,5 +21,8 @@
     "build": "gulp"
   },
   "author": "Claudio Vallesi",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jquery": "^3.3.1"
+  }
 }
