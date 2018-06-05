@@ -1,38 +1,39 @@
 {
-    "manifest_version": 2,
-    "name": "Tildes Extended",
-    "description": "Cross Browsers extension to improve Tildes.net UI/UX",
-    "version": "0.1",
-    "homepage_url": "https://github.com/theCrius/tildes-extended",
-    "permissions": [
-      "storage",
-      "unlimitedStorage",
-      "activeTab",
-      "https://tildes.net/*"
-    ],
-    "icons": {
-      "48": "images/tildes-extended.png"
-    },
+  "manifest_version": 2,
+  "name": "Tildes Extended",
+  "description": "Cross Browsers extension to improve Tildes.net UI/UX",
+  "version": "0.1",
+  "homepage_url": "https://github.com/theCrius/tildes-extended",
+  "permissions": [
+    "storage",
+    "https://tildes.net/*"
+  ],
+  "icons": {
+    "48": "images/tildes-extended.png"
+  },
 
-    "content_scripts": [
-        {
-            "matches": ["*://tildes.net/*"],
-            "js": [
-                "scripts/vendors/jquery.min.js",
-                "scripts/globals.js",
-                "scripts/link-new-tab.js",
-                "scripts/jump-to-new-comment.js"
-            ],
-            "css": [
-                "styles/jump-to-new-comment.css"
-            ]
-        }
-    ],
+  "background": {
+    "scripts": [
+      "scripts/background.js"
+    ]
+  },
 
-    "browser_action": {
-        "default_icon": {
-          "32": "images/tildes-extended.png"
-        },
-        "default_popup": "popup.html"
+  "content_scripts": [{
+    "matches": ["*://tildes.net/*"],
+    "js": [
+      "scripts/vendors/jquery.min.js",
+      "scripts/globals.js",
+      "scripts/link-new-tab.js",
+      "scripts/jump-to-new-comment.js"
+    ],
+    "css": [
+      "styles/jump-to-new-comment.css"
+    ]
+  }],
+
+  "browser_action": {
+    "default_icon": {
+      "32": "images/tildes-extended.png"
     }
+  }
 }
