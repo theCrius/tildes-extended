@@ -15,10 +15,18 @@
     },
 
     "content_scripts": [
-      {
-        "matches": ["*://tildes.net/*"],
-        "js": ["scripts/link-new-tab.js"]
-      }
+        {
+            "matches": ["*://tildes.net/*"],
+            "js": [
+                "scripts/vendors/jquery.min.js",
+                "scripts/globals.js",
+                "scripts/link-new-tab.js",
+                "scripts/jump-to-new-comment.js"
+            ],
+            "css": [
+                "styles/jump-to-new-comment.css"
+            ]
+        }
     ],
 
     "browser_action": {

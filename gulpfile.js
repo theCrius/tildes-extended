@@ -3,41 +3,45 @@
 'use strict';
 
 const gulp = require('gulp'),
-	clean = require('gulp-clean'),
+	del = require('del'),
 	cleanhtml = require('gulp-cleanhtml'),
 	eslint = require('gulp-eslint'),
 	stripdebug = require('gulp-strip-debug'),
 	uglify = require('gulp-uglify-es').default,
+	sass = require('gulp-sass'),
 	zip = require('gulp-zip');
 
 const distFolder = 'dist';
 
 //clean build directory
-gulp.task('clean', function() {
-	return gulp.src( distFolder, {read: false})
-		.pipe(clean());
+gulp.task('clean', function () {
+  return del('./' + distFolder + '/**/*');
 });
 
 //copy static folders to build directory
 gulp.task('copy', function() {
-	// gulp.src('src/fonts/*')
-	// 	.pipe(gulp.dest( distFolder + '/fonts'));
-	gulp.src('src/images/*')
-		.pipe(gulp.dest( distFolder + '/images'));
+	// gulp.src('src/fonts/**/*')
+	// 	.pipe(gulp.dest('./' + distFolder + '/fonts'));
+	gulp.src('src/images/**/*')
+		.pipe(gulp.dest('./' + distFolder + '/images'));
 	return gulp.src('src/manifest.json')
-		.pipe(gulp.dest(distFolder));
+		.pipe(gulp.dest('./' + distFolder));
 });
 
 //copy and compress HTML files
 gulp.task('html', function() {
 	return gulp.src('src/*.html')
 		.pipe(cleanhtml())
-		.pipe(gulp.dest(distFolder));
+		.pipe(gulp.dest('./' + distFolder));
 });
 
 // Check with eslint that everything is fine in the extension's code
 gulp.task('eslint', () => {
-  return gulp.src(['src/scripts/*.js', 'src/scripts/**/*.js','!node_modules/**'])
+  return gulp.src([
+		'src/scripts/*.js',
+		'src/scripts/**/*.js',
+		'!node_modules/**'
+	])
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
@@ -45,21 +49,21 @@ gulp.task('eslint', () => {
 
 //copy vendor scripts and uglify all other scripts, creating source maps
 gulp.task('scripts', ['eslint'], function() {
-	// gulp.src('node_modules/**/*.js')
-		// .pipe(gulp.dest( distFolder + '/scripts/vendors'));
+	gulp.src([
+		'./node_modules/jquery/dist/jquery.min.js'
+	])
+		.pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
 	return gulp.src('src/scripts/*.js')
 		.pipe(stripdebug())
-		.pipe(uglify({sourceMap: {
-        filename: "script.js",
-        url: "script.js.map"
-    }}))
-		.pipe(gulp.dest( distFolder + '/scripts'));
+		.pipe(uglify())
+		.pipe(gulp.dest('./' + distFolder + '/scripts'));
 });
 
 //minify styles
 gulp.task('styles', function() {
-	return gulp.src('src/styles/**')
-		.pipe(gulp.dest( distFolder + '/styles'));
+	return gulp.src('./src/styles/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('./' + distFolder + '/styles'));
 });
 
 //build ditributable and sourcemaps after other tasks completed
@@ -68,13 +72,13 @@ gulp.task('zip', ['html', 'scripts', 'styles', 'copy'], function() {
 		distFileName = manifest.name + ' v' + manifest.version + '.zip',
 		mapFileName = manifest.name + ' v' + manifest.version + '-maps.zip';
 	//collect all source maps
-	gulp.src( distFolder + '/scripts/**/*.map')
+	gulp.src('./' + distFolder + '/scripts/**/*.map')
 		.pipe(zip(mapFileName))
-		.pipe(gulp.dest(distFolder));
+		.pipe(gulp.dest('./' + distFolder));
 	//build distributable extension
-	return gulp.src([ distFolder + '/**', '!' + distFolder + '/scripts/**/*.map'])
+	return gulp.src(['./' + distFolder + '/**', '!./' + distFolder + '/scripts/**/*.map'])
 		.pipe(zip(distFileName))
-		.pipe(gulp.dest(distFolder));
+		.pipe(gulp.dest('./' + distFolder));
 });
 
 //run all tasks after build directory has been cleaned
