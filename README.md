@@ -2,7 +2,7 @@
 
 ## What it is
 
-An attempt at creating a basic browser extension cross-compatible with at least firefox and chrome, that extend [tildes](www.tildes.net) functionalities.
+An attempt at creating a basic browser extension cross-compatible with at least firefox and chrome, that extend [tildes](https://tildes.net) functionalities.
 
 ## How to use it
 
