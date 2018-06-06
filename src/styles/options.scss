@@ -1,0 +1,37 @@
+.options-body {
+  //Solarized Dark <3
+  background-color: #003945;
+  color: #839496;
+
+  hr {
+    border: none;
+    height: 1px;
+    background-color: #DDDDDD;
+  }
+}
+
+.options-container {
+  max-width: 25vw;
+  width: 50vw;
+  margin: 0 auto;
+}
+
+.options-actions {
+  padding: 5px;
+  text-align: center;
+}
+
+.options-notifications {
+  padding: 5px;
+  text-align: center;
+
+  .success {
+    color: green;
+    font-weight: bold;
+  }
+
+  .failure {
+    color: red;
+    font-weight: bold;
+  }
+}
