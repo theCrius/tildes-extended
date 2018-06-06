@@ -12,7 +12,7 @@ const defaultSettings = {
 };
 
 function loadOptions() {
-  chrome.storage.sync.get({
+  chrome.storage.local.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
     clog('Loaded Options:', config);
@@ -39,7 +39,7 @@ function saveOptions() {
   }
 
   // Store in local storage
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     tildesExtendedSettings: options
   }, function() {
     $('#options_status').addClass('success');

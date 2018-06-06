@@ -1,6 +1,6 @@
 /* globals $ */
 
-chrome.storage.sync.get({
+chrome.storage.local.get({
   tildesExtendedSettings: {linkNewTab: {}}
 }, function(res) {
   // const clog = console.log.bind(console);
