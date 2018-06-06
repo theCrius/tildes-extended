@@ -22,7 +22,7 @@ gulp.task('clean', function () {
 gulp.task('copy', function() {
 	// gulp.src('src/fonts/**/*')
 	// 	.pipe(gulp.dest('./' + distFolder + '/fonts'));
-	gulp.src('src/images/**/*')
+	gulp.src('src/images/**')
 		.pipe(gulp.dest('./' + distFolder + '/images'));
 	return gulp.src('src/manifest.json')
 		.pipe(gulp.dest('./' + distFolder));
