@@ -2,11 +2,12 @@
   "manifest_version": 2,
   "name": "Tildes Extended",
   "description": "Browsers extension to improve Tildes.net UI/UX",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage_url": "https://github.com/theCrius/tildes-extended",
   "permissions": [
+    "tabs",
     "storage",
-    "https://tildes.net/*"
+    "*://tildes.net/*"
   ],
   "icons": {
     "48": "images/tildes-extended.png"
@@ -47,5 +48,7 @@
     "default_icon": {
       "32": "images/tildes-extended.png"
     }
-  }
+  },
+
+  "content_security_policy": "script-src 'self'; object-src 'self'; style-src 'unsafe-inline'"
 }
