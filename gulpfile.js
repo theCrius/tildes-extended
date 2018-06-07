@@ -50,12 +50,13 @@ gulp.task('eslint', () => {
 //copy vendor scripts and uglify all other scripts, creating source maps
 gulp.task('scripts', ['eslint'], function() {
 	gulp.src([
-		'./node_modules/jquery/dist/jquery.min.js'
+		'./node_modules/jquery/dist/jquery.min.js',
+		'./node_modules/marked/marked.min.js'
 	])
 		.pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
 	return gulp.src('src/scripts/*.js')
 		.pipe(stripdebug())
-		.pipe(uglify())
+		// .pipe(uglify())
 		.pipe(gulp.dest('./' + distFolder + '/scripts'));
 });
 
