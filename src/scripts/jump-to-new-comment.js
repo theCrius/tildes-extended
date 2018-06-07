@@ -16,11 +16,12 @@ chrome.storage.local.get({
             class="btn btn-primary fixed-bottom-right">
         `).appendTo($("body"));
     }
+
+    $('#TE_scrollToNewComments').on('click', () => { __te_scrollToNewComment() });
   }
 });
 
-function __te_scrollToNewComment(e) {
-  e.preventDefault();
+function __te_scrollToNewComment() {
   $(".is-comment-new")[0].scrollIntoView();
   // Remove the "new comment" class to update the visual feedback
   setTimeout(function() {
@@ -31,5 +32,3 @@ function __te_scrollToNewComment(e) {
     }
   }, 250);
 }
-
-$('#TE_scrollToNewComments').on('click', (e) => { __te_scrollToNewComment(e) });
