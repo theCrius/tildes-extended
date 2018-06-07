@@ -1,7 +1,13 @@
 .options-body {
+  font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+
   //Solarized Dark <3
   background-color: #003945;
-  color: #839496;
+  color: #93a1a1;
+
+  button {
+    padding: 4px 15px;
+  }
 
   hr {
     border: none;
