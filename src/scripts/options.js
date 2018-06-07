@@ -23,6 +23,14 @@ const defaultSettings = {
 };
 
 function loadOptions() {
+  if (navigator.userAgent.indexOf("Firefox") !== -1) {
+    $("#custom_style_url_div")
+      .append("<br><span>Note: Firefox will not allow this to be loaded unless you open <code>about:config</code>, search the flag <code>security.csp.enable</code> and disable it.</span>")
+  } else {
+    $("#custom_style_url_div")
+      .append("<br><span>Please be aware that we're not checking the CSS validity</span>")
+  }
+
   chrome.storage.local.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
