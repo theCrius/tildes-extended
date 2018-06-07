@@ -1,48 +1,51 @@
 /* globals $, marked */
 
-// Written by avinassh: https://github.com/avinassh
+chrome.storage.local.get({
+  tildesExtendedSettings: {linkNewTab: {}}
+}, function(res) {
+  // const clog = console.log.bind(console);
+  // clog(res);
+  const markdownPreview_enabled = res.tildesExtendedSettings.markdownPreview.enabled;
 
-(function() {
-    $('body').keydown(debounce(function(e) {
-		let $targetArea = $(e.target);
-		let $targetParent = $targetArea.parent()
-		if ($targetParent.has('#markdown-preview-div').length == 0) {
-			appendPreviewDiv($targetArea);
-		}
-		if ($targetArea.val().length == 0) {
-			$targetParent.find('#markdown-preview-div').hide();
-		} else {
-			$targetParent.find('#markdown-preview').html(marked($targetArea.val()));
-			$targetParent.find('#markdown-preview-div').show();
-		}
-	}, 250));
-})();
+  if(markdownPreview_enabled) {
+    // Originally written by avinassh: https://github.com/avinassh
+    $("body").keydown(debounce(function(e) {
+      // clog($(e.target).val());
+      const $targetArea = $(e.target);
+      const $targetParent = $targetArea.parent()
+      if (!$targetArea.parent().has('#markdown-preview-div').length) {
+        $targetArea.parent().append(`
+        <div id="markdown-preview-div">
+          <hr/>
+          <div>
+            <h2>Live preview</h2>
+            <div id="markdown-preview"></div>
+          </div>
+        </div>`);
+      }
 
-function appendPreviewDiv($textArea) {
-    let divForComments = '<div id="markdown-preview-div"><hr/><div><h2>Live preview</h2><div id="markdown-preview"></div></div></div>';
-	let divForPosts = '<div id="markdown-preview-div"><div class="divider"></div><div><label class="form-label">Live preview</label><br><div id="markdown-preview"></div><br></div></div>';
-
-    let $form = $textArea.parent();
-
-    if ($textArea.prop('placeholder') === 'Comment text (markdown)') {
-        $form.append(divForComments);
-    } else {
-        $form.append(divForPosts);
-    }
-	$('#markdown-preview-div').hide();
-}
+      if (!$targetArea.val().length) {
+        $targetParent.find('#markdown-preview-div').hide();
+      } else {
+        $targetParent.find('#markdown-preview-div').show();
+        $targetParent.find('#markdown-preview').html(marked($targetArea.val()));
+      }
+    }, 250));
+  }
+});
 
 // http://davidwalsh.name/javascript-debounce-function
 function debounce(func, wait, immediate) {
-	var timeout;
+	let timeout;
 	return function() {
-		var context = this, args = arguments;
-		var later = function() {
+		let context = this, args = arguments;
+		let later = () => {
 			timeout = null;
 			if (!immediate) func.apply(context, args);
 		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
+		let callNow = immediate && !timeout;
+
+    clearTimeout(timeout);
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(context, args);
 	};
