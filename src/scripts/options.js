@@ -1,6 +1,13 @@
 /* globals $ */
 const clog = console.log.bind(console);
 
+// CORS ANYWHERE pass-through
+$.ajaxPrefilter(function(options) {
+    if (options.crossDomain && $.support.cors) {
+        options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
+    }
+});
+
 const defaultSettings = {
   linkNewTab: {
     enabled: true,
@@ -8,6 +15,10 @@ const defaultSettings = {
   },
   jumpToNewComment: {
     enabled: true
+  },
+  customStyle: {
+    enabled: false,
+    url: ''
   }
 };
 
@@ -25,31 +36,75 @@ function loadOptions() {
     $('#link_new_tab_type_users').prop("checked", config.tildesExtendedSettings.linkNewTab.types.findIndex(i => i === 'users') !== -1);
     // Jump to New Comment
     $('#jump_new_comment_enabled').prop("checked", config.tildesExtendedSettings.jumpToNewComment.enabled);
+    // Load Custom Styles
+    $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled);
+    $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
+    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled)) {
+      $('#custom_styles_url').attr('disabled', false);
+    }
+    $('#custom_styles_enabled').change(function() {
+        if ($(this).is(':checked')) {
+          $('#custom_styles_url').attr('disabled', false);
+        } else {
+          $('#custom_styles_url').attr('disabled', true);
+        }
+    });
   });
 }
 
 function saveOptions() {
+  $('#options_save').attr('disabled', true);
   const options = {};
   options.linkNewTab = {
     enabled: $('#link_new_tab_enabled').prop('checked'),
     types: $("input[id^='link_new_tab_type_']").filter(':checked').map((i, el) => el.name).get()
-  }
+  };
   options.jumpToNewComment = {
     enabled: $('#jump_new_comment_enabled').prop('checked')
+  };
+  options.customStyle = {
+    enabled: $('#custom_styles_enabled').prop('checked'),
+    url: $('#custom_styles_url').val()
+  };
+  // TODO: This is a mess and should be rewritten in a better way
+  if (options.customStyle.enabled && options.customStyle.url) {
+    $('#options_status').removeClass();
+    $('#options_status').addClass('loading');
+    $('#options_status').html('Saving...');
+    $.get(options.customStyle.url).then((data) => {
+      options.customStyle.source = data;
+      storeConfig(options);
+    }).catch((err) => {
+      $('#options_save').attr('disabled', false);
+      $('#options_status').removeClass();
+      $('#options_status').addClass('failure');
+      $('#options_status').html('Something went wrong with the CSS :(');
+      clog('ERROR LOADING CUSTOM STYLE:', err);
+      setTimeout(function() {
+        $('#options_status').removeClass();
+        $('#options_status').html('');
+      }, 6000);
+    });
+  } else {
+    storeConfig(options);
   }
+}
 
-  // Store in local storage
+// Store in local storage
+function storeConfig(options) {
   chrome.storage.local.set({
     tildesExtendedSettings: options
   }, function() {
+    $('#options_save').attr('disabled', false);
+    $('#options_status').removeClass();
     $('#options_status').addClass('success');
-    $('#options_status').html('Options Saved!<br>Remeber to refresh the Tildes.net tabs for the changes to take effect!');
+    $('#options_status').html('Options Saved!<br>Remeber to refresh Tildes.net for the changes to take effect!');
     setTimeout(function() {
+      $('#options_status').removeClass();
       $('#options_status').html('');
-      $('#options_status').removeClass('success');
     }, 6000);
   });
 }
 
-document.addEventListener('DOMContentLoaded', loadOptions);
-document.getElementById('options_save').addEventListener('click', saveOptions);
+$('#options_save').on('click', saveOptions);
+$(document).on('DOMContentLoaded', loadOptions);

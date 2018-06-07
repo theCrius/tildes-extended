@@ -25,8 +25,16 @@
 
   "content_scripts": [{
     "matches": ["*://tildes.net/*"],
+    "run_at": "document_start",
     "js": [
       "scripts/vendors/jquery.min.js",
+      "scripts/custom-styles.js"
+    ]
+  },
+  {
+    "matches": ["*://tildes.net/*"],
+    "run_at": "document_end",
+    "js": [
       "scripts/link-new-tab.js",
       "scripts/jump-to-new-comment.js"
     ],
