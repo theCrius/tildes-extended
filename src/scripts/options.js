@@ -9,6 +9,7 @@ $.ajaxPrefilter(function(options) {
 });
 
 const defaultSettings = {
+  initialSetup: true,
   linkNewTab: {
     enabled: true,
     types: ['text_submissions_links', 'link_submissions', 'comment_links']
@@ -19,6 +20,9 @@ const defaultSettings = {
   customStyle: {
     enabled: false,
     url: ''
+  },
+  markdownPreview: {
+    enabled: true
   }
 };
 
@@ -34,7 +38,12 @@ function loadOptions() {
   chrome.storage.local.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
-    clog('Loaded Options:', config);
+    if(config.tildesExtendedSettings.initialSetup) {
+      delete config.tildesExtendedSettings.initialSetup;
+      chrome.storage.local.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
+        clog('Initial Config stored:', config.tildesExtendedSettings);
+      });
+    }
     // Link in New Tab
     $('#link_new_tab_enabled').prop("checked", config.tildesExtendedSettings.linkNewTab.enabled);
     $('#link_new_tab_type_text_submissions').prop("checked", config.tildesExtendedSettings.linkNewTab.types.findIndex(i => i === 'text_submissions') !== -1);
@@ -57,6 +66,8 @@ function loadOptions() {
           $('#custom_styles_url').attr('disabled', true);
         }
     });
+    // Markdown Preview
+    $('#markdown_preview_enabled').prop("checked", config.tildesExtendedSettings.markdownPreview.enabled);
   });
 }
 
@@ -74,6 +85,9 @@ function saveOptions() {
     enabled: $('#custom_styles_enabled').prop('checked'),
     url: $('#custom_styles_url').val()
   };
+  options.markdownPreview = {
+    enabled: $('#markdown_preview_enabled').prop("checked")
+  }
   // TODO: This is a mess and should be rewritten in a better way
   if (options.customStyle.enabled && options.customStyle.url) {
     $('#options_status').removeClass();
@@ -103,6 +117,7 @@ function storeConfig(options) {
   chrome.storage.local.set({
     tildesExtendedSettings: options
   }, function() {
+    clog('Config updated:', options);
     $('#options_save').attr('disabled', false);
     $('#options_status').removeClass();
     $('#options_status').addClass('success');
