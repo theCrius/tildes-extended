@@ -56,7 +56,7 @@ gulp.task('scripts', ['eslint'], function() {
 		.pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
 	return gulp.src('src/scripts/*.js')
 		.pipe(stripdebug())
-		// .pipe(uglify())
+		.pipe(uglify())
 		.pipe(gulp.dest('./' + distFolder + '/scripts'));
 });
 
