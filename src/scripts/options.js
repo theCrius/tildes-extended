@@ -24,6 +24,9 @@ const defaultSettings = {
   },
   markdownPreview: {
     enabled: true
+  },
+  usersLabel: {
+    enabled: true
   }
 };
 
@@ -71,6 +74,8 @@ function loadOptions() {
     });
     // Markdown Preview
     $('#markdown_preview_enabled').prop("checked", config.tildesExtendedSettings.markdownPreview.enabled);
+    // Users Label
+    $('#users_label_enabled').prop("checked", config.tildesExtendedSettings.usersLabel.enabled);
   });
 }
 
@@ -90,6 +95,9 @@ function saveOptions() {
   };
   options.markdownPreview = {
     enabled: $('#markdown_preview_enabled').prop("checked")
+  }
+  options.usersLabel = {
+    enabled: $('#users_label_enabled').prop("checked")
   }
   // TODO: This is a mess and should be rewritten in a better way
   if (options.customStyle.enabled) {
