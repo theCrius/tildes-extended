@@ -25,8 +25,7 @@ const defaultSettings = {
     enabled: true
   },
   usersLabel: {
-    enabled: true,
-    labels: {}
+    enabled: true
   }
 };
 
