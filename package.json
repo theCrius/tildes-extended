@@ -1,15 +1,15 @@
 {
   "name": "tildes-extended",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Collection of QoL features for Tildes.net",
   "main": "index.js",
   "devDependencies": {
-    "del": "^3.0.0",
+    "del": "latest",
     "eslint": "latest",
     "gulp": "latest",
     "gulp-cleanhtml": "latest",
     "gulp-eslint": "latest",
-    "gulp-sass": "^4.0.1",
+    "gulp-sass": "latest",
     "gulp-strip-debug": "latest",
     "gulp-uglify-es": "latest",
     "gulp-zip": "latest"

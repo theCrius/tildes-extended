@@ -13,27 +13,27 @@ chrome.storage.local.get({
     if (linkNewTab_enabled) {
       if(linkNewTab_type.findIndex(t => t === 'text_submissions') !== -1) {
         if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf("http") === -1) {
-            $(this).attr('target', '_blank');
+          $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'text_submissions_links') !== -1) {
-        if($(this).parent().parent().hasClass('topic-text-excerpt') || $(this).parent().parent().hasClass('topic-full-text')) {
-            $(this).attr('target', '_blank');
+        if($(this).parents('.topic-text-excerpt') || $(this).parents('.topic-full-text')) {
+          $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'link_submissions') !== -1) {
         if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf("http") !== -1) {
-            $(this).attr('target', '_blank');
+          $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'comment_links') !== -1) {
-        if($(this).parent().parent().hasClass('comment-text')) {
-            $(this).attr('target', '_blank');
+        if($(this).parents('.comment-text')) {
+          $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'users') !== -1) {
         if($(this).hasClass('link-user')) {
-            $(this).attr('target', '_blank');
+          $(this).attr('target', '_blank');
         }
       }
     }
