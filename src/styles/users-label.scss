@@ -1,0 +1,58 @@
+.user-label {
+  display: inline-block;
+  padding: 3px;
+  color: white;
+  border-radius: 2px;
+  margin: 0px 3px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.label-edit-box {
+  font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+  font-size: 10px;
+  border-radius: 2px;
+  border: 1px solid slategray;
+  background-color: ghostwhite;
+  color: black;
+  display: none;
+  position: absolute;
+  padding: 5px;
+
+  .edit_label_actions {
+    text-align: center;
+    padding-top: 10px;
+
+    a {
+      padding-right: 5px;
+    }
+  }
+}
+
+.bg-none {
+  border: 1px solid slategray;
+}
+
+.bg-red {
+  background-color: red;
+}
+
+.bg-orangered {
+  background-color: orangered;
+}
+
+.bg-orange {
+  background-color: orange;
+}
+
+.bg-dodgerblue {
+  background-color: dodgerblue;
+}
+
+.bg-forestgreen {
+  background-color: forestgreen;
+}
+
+.bg-slategray {
+  background-color: slategray;
+}
