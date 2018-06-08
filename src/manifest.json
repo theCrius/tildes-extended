@@ -2,12 +2,13 @@
   "manifest_version": 2,
   "name": "Tildes Extended",
   "description": "Browsers extension to improve Tildes.net UI/UX",
-  "version": "0.5.2",
+  "version": "0.5.4",
   "homepage_url": "https://github.com/theCrius/tildes-extended",
   "permissions": [
     "tabs",
     "storage",
-    "*://tildes.net/*"
+    "*://tildes.net/*",
+    "*://*.tildes.net/*"
   ],
   "icons": {
     "48": "images/tildes-extended.png"
@@ -25,11 +26,13 @@
   },
 
   "content_scripts": [{
-    "matches": ["*://tildes.net/*"],
+    "matches": [
+      "*://tildes.net/*",
+      "*://*.tildes.net/*"
+    ],
     "run_at": "document_start",
     "js": [
       "scripts/vendors/jquery.min.js",
-      "scripts/vendors/marked.min.js",
       "scripts/custom-styles.js"
     ]
   },
@@ -37,6 +40,7 @@
     "matches": ["*://tildes.net/*"],
     "run_at": "document_end",
     "js": [
+      "scripts/vendors/marked.min.js",
       "scripts/link-new-tab.js",
       "scripts/jump-to-new-comment.js",
       "scripts/markdown-preview.js",

@@ -1,11 +1,18 @@
 .user-label {
   display: inline-block;
   padding: 3px;
-  color: white;
   border-radius: 2px;
   margin: 0px 3px;
   font-size: 10px;
   cursor: pointer;
+}
+
+.text-light {
+  color: #000 !important;
+}
+
+.text-dark {
+  color: #fff !important;
 }
 
 .label-edit-box {
