@@ -9,30 +9,35 @@ chrome.storage.local.get({
   const linkNewTab_type = res.tildesExtendedSettings.linkNewTab.types;
 
   // Everytime the user click on a link, it checks how to behave given the context and the settings
-  $('a').click(function() {
+  $('a').on('click', function() {
     if (linkNewTab_enabled) {
       if(linkNewTab_type.findIndex(t => t === 'text_submissions') !== -1) {
         if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf("http") === -1) {
+          // clog('text_submissions');
           $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'text_submissions_links') !== -1) {
-        if($(this).parents('.topic-text-excerpt') || $(this).parents('.topic-full-text')) {
+        if($(this).closest().hasClass('topic-text-excerpt') || $(this).closest().hasClass('topic-full-text')) {
+          // clog('text_submissions_links');
           $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'link_submissions') !== -1) {
         if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf("http") !== -1) {
+          // clog('link_submissions');
           $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'comment_links') !== -1) {
-        if($(this).parents('.comment-text')) {
+        if($(this).closest().hasClass('comment-text')) {
+          // clog('comment_links');
           $(this).attr('target', '_blank');
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'users') !== -1) {
         if($(this).hasClass('link-user')) {
+          // clog('users');
           $(this).attr('target', '_blank');
         }
       }
