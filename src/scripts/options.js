@@ -19,7 +19,8 @@ const defaultSettings = {
   },
   customStyle: {
     enabled: false,
-    url: ''
+    url: '',
+    source: null
   },
   markdownPreview: {
     enabled: true
@@ -58,12 +59,14 @@ function loadOptions() {
     $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
     if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled)) {
       $('#custom_styles_url').attr('disabled', false);
+      $('#custom_styles_url').val('');
     }
     $('#custom_styles_enabled').change(function() {
         if ($(this).is(':checked')) {
           $('#custom_styles_url').attr('disabled', false);
         } else {
           $('#custom_styles_url').attr('disabled', true);
+          $('#custom_styles_url').val('');
         }
     });
     // Markdown Preview
@@ -89,24 +92,29 @@ function saveOptions() {
     enabled: $('#markdown_preview_enabled').prop("checked")
   }
   // TODO: This is a mess and should be rewritten in a better way
-  if (options.customStyle.enabled && options.customStyle.url) {
-    $('#options_status').removeClass();
-    $('#options_status').addClass('loading');
-    $('#options_status').html('Saving...');
-    $.get(options.customStyle.url).then((data) => {
-      options.customStyle.source = data;
-      storeConfig(options);
-    }).catch((err) => {
-      $('#options_save').attr('disabled', false);
+  if (options.customStyle.enabled) {
+    if (options.customStyle.url) {
       $('#options_status').removeClass();
-      $('#options_status').addClass('failure');
-      $('#options_status').html('Something went wrong with the CSS :(');
-      clog('ERROR LOADING CUSTOM STYLE:', err);
-      setTimeout(function() {
+      $('#options_status').addClass('loading');
+      $('#options_status').html('Saving...');
+      $.get(options.customStyle.url).then((data) => {
+        options.customStyle.source = data;
+        storeConfig(options);
+      }).catch((err) => {
+        $('#options_save').attr('disabled', false);
         $('#options_status').removeClass();
-        $('#options_status').html('');
-      }, 6000);
-    });
+        $('#options_status').addClass('failure');
+        $('#options_status').html('Something went wrong with the CSS :(');
+        clog('ERROR LOADING CUSTOM STYLE:', err);
+        setTimeout(function() {
+          $('#options_status').removeClass();
+          $('#options_status').html('');
+        }, 3000);
+      });
+    } else {
+      options.customStyle.source = null;
+      storeConfig(options);
+    }
   } else {
     storeConfig(options);
   }
@@ -125,7 +133,7 @@ function storeConfig(options) {
     setTimeout(function() {
       $('#options_status').removeClass();
       $('#options_status').html('');
-    }, 6000);
+    }, 3000);
   });
 }
 
