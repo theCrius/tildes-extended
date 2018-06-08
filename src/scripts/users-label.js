@@ -1,5 +1,5 @@
 /* globals $ */
-const clog = console.log.bind(console);
+// const clog = console.log.bind(console);
 let labels = {};
 
 chrome.storage.local.get({
@@ -115,6 +115,6 @@ function removeLabel(e) {
 
 function closeEditBox(e) {
   e.preventDefault();
-  clog('Current labels:', labels);
+  // clog('Current labels:', labels);
   $("#label_edit").hide();
 }

@@ -1,10 +1,10 @@
 /* globals $ */
-const clog = console.log.bind(console);
+// const clog = console.log.bind(console);
 
 chrome.storage.local.get({
   tildesExtendedSettings: {customStyle: {}}
 }, function(res) {
-  clog(res);
+  // clog(res);
   const customStyles_enabled = res.tildesExtendedSettings.customStyle.enabled;
 
   if(customStyles_enabled) {
