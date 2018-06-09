@@ -170,9 +170,9 @@ $.fn.colourBrightness = function(){
   brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
   if (brightness < 125) {
-    this.removeClass("text-light").addClass("text-dark");
+    this.removeClass("label-light").addClass("label-dark");
   } else {
-    this.removeClass("text-dark").addClass("text-light");
+    this.removeClass("label-dark").addClass("label-light");
   }
   return this;
 };
