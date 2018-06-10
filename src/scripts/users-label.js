@@ -1,6 +1,29 @@
 /* globals $ */
 // const clog = console.log.bind(console);
+const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 let labels = {};
+
+// Workaround to reload the label after a vote/unvote of a comment
+const observer = new MutationObserver(mutations => {
+  // Find all comments that were mutated
+  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains("comment-itself"));
+  if (elements.length > 0) {
+    // Stop observer to avoid infinite loop
+    observer.disconnect();
+    populateLabels($(elements), labels);
+    startObserver();
+  }
+});
+
+function startObserver() {
+  const el = $(".topic-comments, .post-listing")[0];
+  if (!el) return;
+
+  observer.observe(el, {
+    childList: true,
+    subtree: true
+  });
+}
 
 chrome.storage.local.get({
   tildesExtendedSettings: {usersLabel: {}}
@@ -15,7 +38,13 @@ chrome.storage.local.get({
     }, function(res_labels) {
       // clog(res_labels);
       labels = res_labels.tildesExtendedUsersLabels ?  res_labels.tildesExtendedUsersLabels : {};
-      populateLabels(labels);
+      populateLabels($(document.body), labels);
+      startObserver();
+
+      observer.observe($(".topic-comments")[0], {
+        childList: true,
+        subtree: true
+      });
 
       // Div for edit label mini-form
       $("body").append(`
@@ -51,12 +80,12 @@ chrome.storage.local.get({
   }
 });
 
-function populateLabels(labels) {
+function populateLabels($el, labels) {
   // Cleanup previously created labels
-  $("span[id^=TE_label]").remove();
+  $el.find("span[id^=TE_label]").remove();
 
   // Iterate through all users-link
-  $("a[class='link-user']").each( function() {
+  $el.find("a[class='link-user']").each( function() {
     const labelInfo = labels[$(this).text()];
     if(labelInfo) {
       // IF a label exists in local storage THEN Append <span class="user-label bg-COLOR">TEXT</span>
@@ -68,10 +97,10 @@ function populateLabels(labels) {
   });
 
   // Determine dark/bright theme and adjusting the css accordingly
-  $("span[id^=TE_label]").colourBrightness();
+  $el.find("span[id^=TE_label]").colourBrightness();
 
   // Listener on 'click' for labels
-  $("span[id^=TE_label]").on('click', (e) => editLabel(e));
+  $el.find("span[id^=TE_label]").on('click', (e) => editLabel(e));
 }
 
 function editLabel(e) {
@@ -176,25 +205,3 @@ $.fn.colourBrightness = function(){
   }
   return this;
 };
-
-// Workaround to reload the label after a vote/unvote of a comment
-// A better solution would be to listen for XHR requests and detect a response received but apparently
-// either it doesn't work with browser extension injected code or tildes.net use masked request
-const inTopic = window.location.pathname !== '/';
-addVoteListener();
-
-function addVoteListener() {
-  if(inTopic) {
-    $("a[name=vote]").on('click', () => refreshLabel());
-    $("a[name=unvote]").on('click', () => refreshLabel());
-  }
-}
-
-function refreshLabel() {
-  if(inTopic) {
-    setTimeout(() => {
-      addVoteListener();
-      populateLabels(labels);
-    }, 500); // after 500 msec refresh the labels. most request should complete in <200 msec
-  }
-}
