@@ -17,9 +17,11 @@ const defaultSettings = {
   jumpToNewComment: {
     enabled: true
   },
-  customStyle: {
+  customStyles: {
     enabled: false,
-    url: '',
+    urls: [],
+    externalCss: '',
+    customCss: '',
     source: null
   },
   markdownPreview: {
@@ -35,10 +37,10 @@ const defaultSettings = {
 
 function loadOptions() {
   if (navigator.userAgent.indexOf("Firefox") !== -1) {
-    $("#custom_style_url_div")
+    $("#custom_styles_url_div")
       .append("<br><span>Note: Firefox will not allow this to be loaded unless you open <code>about:config</code>, search the flag <code>security.csp.enable</code> and disable it.</span>")
   } else {
-    $("#custom_style_url_div")
+    $("#custom_styles_url_div")
       .append("<br><span>Please be aware that we're not checking the CSS validity</span>")
   }
 
@@ -61,18 +63,26 @@ function loadOptions() {
     // Jump to New Comment
     $('#jump_new_comment_enabled').prop("checked", config.tildesExtendedSettings.jumpToNewComment.enabled);
     // Load Custom Styles
-    $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled);
-    $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
-    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled)) {
-      $('#custom_styles_url').attr('disabled', false);
-      $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
+    $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled);
+    $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(','));
+    $('#custom_styles_textarea').val(config.tildesExtendedSettings.customStyles.customCss);
+    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled)) {
+      $('#custom_styles_urls').attr('disabled', false);
+      $('#custom_styles_textarea').attr('disabled', false);
+      
+      $('#custom_styles_urls').val('');
+      $('#custom_styles_textarea').val('');
     }
     $('#custom_styles_enabled').change(function() {
         if ($(this).is(':checked')) {
-          $('#custom_styles_url').attr('disabled', false);
+          $('#custom_styles_urls').attr('disabled', false);
+          $('#custom_styles_textarea').attr('disabled', false);
         } else {
-          $('#custom_styles_url').attr('disabled', true);
-          $('#custom_styles_url').val('');
+          $('#custom_styles_urls').attr('disabled', true);
+          $('#custom_styles_textarea').attr('disabled', true);
+          
+          $('#custom_styles_urls').val('');
+          $('#custom_styles_textarea').val('');
         }
     });
     // Markdown Preview
@@ -86,6 +96,11 @@ function loadOptions() {
 
 function saveOptions() {
   $('#options_save').attr('disabled', true);
+
+  var stylesheetUrls =  $('#custom_styles_urls').val().split(',').map(function(url) {
+    return url.trim();
+  });
+
   const options = {};
   options.linkNewTab = {
     enabled: $('#link_new_tab_enabled').prop('checked'),
@@ -94,45 +109,62 @@ function saveOptions() {
   options.jumpToNewComment = {
     enabled: $('#jump_new_comment_enabled').prop('checked')
   };
-  options.customStyle = {
+  options.customStyles = {
     enabled: $('#custom_styles_enabled').prop('checked'),
-    url: $('#custom_styles_url').val()
+    localCss: $('#custom_styles_local').val(),
+    urls: stylesheetUrls
   };
   options.markdownPreview = {
     enabled: $('#markdown_preview_enabled').prop("checked")
-  }
+  };
   options.usersLabel = {
     enabled: $('#users_label_enabled').prop("checked")
-  }
-  options.stickyHeader = {
-    enabled: $('#sticky_header_enabled').prop("checked")
-  }
-  // TODO: This is a mess and should be rewritten in a better way
-  if (options.customStyle.enabled) {
-    if (options.customStyle.url) {
-      $('#options_status').removeClass();
-      $('#options_status').addClass('loading');
-      $('#options_status').html('Saving...');
-      $.get(options.customStyle.url).then((data) => {
-        options.customStyle.source = data;
-        storeConfig(options);
-      }).catch((err) => {
-        $('#options_save').attr('disabled', false);
-        $('#options_status').removeClass();
-        $('#options_status').addClass('failure');
-        $('#options_status').html('Something went wrong with the CSS :(');
-        clog('ERROR LOADING CUSTOM STYLE:', err);
-        setTimeout(function() {
-          $('#options_status').removeClass();
-          $('#options_status').html('');
-        }, 3000);
-      });
-    } else {
-      options.customStyle.source = null;
-      storeConfig(options);
+  };
+  // TODO: This could still be cleaned up more
+  if (options.customStyles.enabled) {
+    updateStatus('Saving...', 'loading');
+
+    if (options.customStyles.urls !== undefined && options.customStyles.urls.length != 0) {
+      downloadStylesheets(options.customStyles.urls)
     }
+
+    // Combine external and local CSS into single source sheet
+    options.customStyles.source = options.customStyles.externalCss + "\n" + options.customStyles.localCss;
   } else {
-    storeConfig(options);
+    options.customStyles.source = null;
+  }
+
+  storeConfig(options);
+}
+
+function downloadStylesheets(stylsheetUrls) {
+  $.when.apply($, stylesheetUrls.map(function(url) {
+      return $.ajax(url);
+  })).done(function() {
+      var stylesheets = [];
+      
+      for (var i = 0; i < arguments.length; i++) {
+        stylesheets.push(arguments[i][0]);
+      }
+
+      options.customStyles.localCss = stylesheets.join("\r\n");
+  }).fail(function(error) {
+    $('#options_save').attr('disabled', false);
+    updateStatus('Error downloading stylesheets, please check the URLs and try again. Multiple URLs should be separated by commas.', 'failure', 3000);
+    clog('ERROR LOADING CUSTOM STYLE:', err.statusText);
+  });
+}
+
+function updateStatus(message, cssClass, removeAfter = false) {
+  $('#options_status').removeClass();
+  $('#options_status').addClass(cssClass);
+  $('#options_status').html(message);
+
+  if(removeAfter) {
+    setTimeout(function() {
+      $('#options_status').removeClass();
+      $('#options_status').html('');
+    }, removeAfter);
   }
 }
 
@@ -142,14 +174,9 @@ function storeConfig(options) {
     tildesExtendedSettings: options
   }, function() {
     clog('Config updated:', options);
+
     $('#options_save').attr('disabled', false);
-    $('#options_status').removeClass();
-    $('#options_status').addClass('success');
-    $('#options_status').html('Options Saved!<br>Remeber to refresh Tildes.net for the changes to take effect!');
-    setTimeout(function() {
-      $('#options_status').removeClass();
-      $('#options_status').html('');
-    }, 3000);
+    updateStatus('Options Saved!<br>Remember to refresh Tildes.net for the changes to take effect!', 'success', 3000)
   });
 }
 
