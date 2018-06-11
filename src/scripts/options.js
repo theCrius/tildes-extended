@@ -62,7 +62,7 @@ function loadOptions() {
     $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
     if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled)) {
       $('#custom_styles_url').attr('disabled', false);
-      $('#custom_styles_url').val('');
+      $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
     }
     $('#custom_styles_enabled').change(function() {
         if ($(this).is(':checked')) {
