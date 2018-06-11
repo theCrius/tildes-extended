@@ -1,29 +1,6 @@
 /* globals $ */
 // const clog = console.log.bind(console);
-const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 let labels = {};
-
-// Workaround to reload the label after a vote/unvote of a comment
-const observer = new MutationObserver(mutations => {
-  // Find all comments that were mutated
-  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains("comment-itself"));
-  if (elements.length > 0) {
-    // Stop observer to avoid infinite loop
-    observer.disconnect();
-    populateLabels($(elements), labels);
-    startObserver();
-  }
-});
-
-function startObserver() {
-  const el = $(".topic-comments, .post-listing")[0];
-  if (!el) return;
-
-  observer.observe(el, {
-    childList: true,
-    subtree: true
-  });
-}
 
 chrome.storage.local.get({
   tildesExtendedSettings: {usersLabel: {}}
@@ -40,11 +17,6 @@ chrome.storage.local.get({
       labels = res_labels.tildesExtendedUsersLabels ?  res_labels.tildesExtendedUsersLabels : {};
       populateLabels($(document.body), labels);
       startObserver();
-
-      observer.observe($(".topic-comments")[0], {
-        childList: true,
-        subtree: true
-      });
 
       // Div for edit label mini-form
       $("body").append(`
@@ -205,3 +177,29 @@ $.fn.colourBrightness = function(){
   }
   return this;
 };
+
+// Use MutationObserver to reload the label after the vote/unvote of a comment
+const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
+const observer = new MutationObserver(mutations => {
+  // Find all comments that were mutated, taking into account only the class "comment-itself"
+  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains("comment-itself"));
+  if (elements.length > 0) {
+    // Stop observer to avoid infinite loop before changing it
+    observer.disconnect();
+    populateLabels($(elements), labels);
+    // Re-enable the observer
+    startObserver();
+  }
+});
+
+function startObserver() {
+  const el = $(".topic-comments, .post-listing");
+  // Run the observer only if there is at least one result
+  if (!el.length) return;
+
+  observer.observe(el[0], {
+    childList: true,
+    subtree: true
+  });
+}
