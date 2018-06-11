@@ -1,29 +1,6 @@
 /* globals $ */
 // const clog = console.log.bind(console);
-const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 let labels = {};
-
-// Workaround to reload the label after a vote/unvote of a comment
-const observer = new MutationObserver(mutations => {
-  // Find all comments that were mutated
-  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains("comment-itself"));
-  if (elements.length > 0) {
-    // Stop observer to avoid infinite loop
-    observer.disconnect();
-    populateLabels($(elements), labels);
-    startObserver();
-  }
-});
-
-function startObserver() {
-  const el = $(".topic-comments, .post-listing")[0];
-  if (!el) return;
-
-  observer.observe(el, {
-    childList: true,
-    subtree: true
-  });
-}
 
 chrome.storage.local.get({
   tildesExtendedSettings: {usersLabel: {}}
@@ -41,18 +18,13 @@ chrome.storage.local.get({
       populateLabels($(document.body), labels);
       startObserver();
 
-      observer.observe($(".topic-comments")[0], {
-        childList: true,
-        subtree: true
-      });
-
       // Div for edit label mini-form
       $("body").append(`
         <div class="label-edit-box" id="label_edit">
           <form>
             <input type="hidden" id="edit_label_id">
             <label for="edit_label_text">Label's text</label><br>
-            <input type="text" size="20" id="edit_label_text"><br>
+            <input type="text" autocomplete="off" size="20" id="edit_label_text"><br>
             <label for="edit_label_color">Label's color</label><br>
             <select id="edit_label_color">
               <option class="bg-none" value="bg-none">none</option>
@@ -117,6 +89,7 @@ function editLabel(e) {
 
   $('#label_edit').css({'top':e.pageY - 90,'left':e.pageX + 10});
   $("#label_edit").show();
+  $("#edit_label_text").focus();
 }
 
 function updateLabel(e) {
@@ -167,18 +140,25 @@ function closeEditBox(e) {
 $.fn.colourBrightness = function(){
   function getBackgroundColor($el) {
     let bgColor = "";
-    while($el[0].tagName.toLowerCase() != "html") {
-      bgColor = $el.css("background-color");
-      if(bgColor != "rgba(0, 0, 0, 0)" && bgColor != "transparent") {
-        break;
+    if ($el.length) {
+      while($el[0].tagName.toLowerCase() != "html") {
+        bgColor = $el.css("background-color");
+        if(bgColor != "rgba(0, 0, 0, 0)" && bgColor != "transparent") {
+          break;
+        }
+        $el = $el.parent();
       }
-      $el = $el.parent();
+      return bgColor;
+    } else {
+      return;
     }
-    return bgColor;
   }
 
-  let r,g,b,brightness,
-      colour = getBackgroundColor(this);
+  let r,g,b,brightness;
+  let colour = getBackgroundColor(this);
+
+  if (!colour)
+    return;
 
   if (colour.match(/^rgb/)) {
     colour = colour.match(/rgba?\(([^)]+)\)/)[1];
@@ -205,3 +185,29 @@ $.fn.colourBrightness = function(){
   }
   return this;
 };
+
+// Use MutationObserver to reload the label after the vote/unvote of a comment
+const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+
+const observer = new MutationObserver(mutations => {
+  // Find all comments that were mutated, taking into account only the class "comment-itself"
+  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains("comment-itself"));
+  if (elements.length > 0) {
+    // Stop observer to avoid infinite loop before changing it
+    observer.disconnect();
+    populateLabels($(elements), labels);
+    // Re-enable the observer
+    startObserver();
+  }
+});
+
+function startObserver() {
+  const el = $(".topic-comments, .post-listing");
+  // Run the observer only if there is at least one result
+  if (!el.length) return;
+
+  observer.observe(el[0], {
+    childList: true,
+    subtree: true
+  });
+}
