@@ -1,9 +1,9 @@
 /* globals $ */
+// const clog = console.log.bind(console);
 
 chrome.storage.local.get({
   tildesExtendedSettings: {linkNewTab: {}}
 }, function(res) {
-  // const clog = console.log.bind(console);
   // clog(res);
   const linkNewTab_enabled = res.tildesExtendedSettings.linkNewTab.enabled;
   const linkNewTab_type = res.tildesExtendedSettings.linkNewTab.types;
@@ -18,7 +18,7 @@ chrome.storage.local.get({
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'text_submissions_links') !== -1) {
-        if($(this).closest().hasClass('topic-text-excerpt') || $(this).closest().hasClass('topic-full-text')) {
+        if($(this).parents().hasClass('topic-text-excerpt') || $(this).parents().hasClass('topic-full-text')) {
           // clog('text_submissions_links');
           $(this).attr('target', '_blank');
         }
@@ -30,7 +30,7 @@ chrome.storage.local.get({
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'comment_links') !== -1) {
-        if($(this).closest().hasClass('comment-text')) {
+        if($(this).parents().hasClass('comment-text')) {
           // clog('comment_links');
           $(this).attr('target', '_blank');
         }
