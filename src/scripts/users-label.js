@@ -24,7 +24,7 @@ chrome.storage.local.get({
           <form>
             <input type="hidden" id="edit_label_id">
             <label for="edit_label_text">Label's text</label><br>
-            <input type="text" size="20" id="edit_label_text"><br>
+            <input type="text" autocomplete="off" size="20" id="edit_label_text"><br>
             <label for="edit_label_color">Label's color</label><br>
             <select id="edit_label_color">
               <option class="bg-none" value="bg-none">none</option>
@@ -89,6 +89,7 @@ function editLabel(e) {
 
   $('#label_edit').css({'top':e.pageY - 90,'left':e.pageX + 10});
   $("#label_edit").show();
+  $("#edit_label_text").focus();
 }
 
 function updateLabel(e) {
@@ -140,14 +141,14 @@ $.fn.colourBrightness = function(){
   function getBackgroundColor($el) {
     let bgColor = "";
     if ($el.length) {
-    while($el[0].tagName.toLowerCase() != "html") {
-      bgColor = $el.css("background-color");
-      if(bgColor != "rgba(0, 0, 0, 0)" && bgColor != "transparent") {
-        break;
+      while($el[0].tagName.toLowerCase() != "html") {
+        bgColor = $el.css("background-color");
+        if(bgColor != "rgba(0, 0, 0, 0)" && bgColor != "transparent") {
+          break;
+        }
+        $el = $el.parent();
       }
-      $el = $el.parent();
-    }
-    return bgColor;
+      return bgColor;
     } else {
       return;
     }
