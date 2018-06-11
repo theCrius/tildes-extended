@@ -44,11 +44,13 @@
       "scripts/link-new-tab.js",
       "scripts/jump-to-new-comment.js",
       "scripts/markdown-preview.js",
-      "scripts/users-label.js"
+      "scripts/users-label.js",
+      "scripts/sticky-header.js"
     ],
     "css": [
       "styles/jump-to-new-comment.css",
-      "styles/users-label.css"
+      "styles/users-label.css",
+      "styles/sticky-header.css"
     ]
   }],
 
