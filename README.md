@@ -22,4 +22,5 @@ Available npm commands are:
 
 * `npm run lint` to validate the code to be compatible with chrome and firefox
 * `npm run serve` to assemble on the fly a non-packaged source code for testing purpose
+* `npm run serve:build` to assemble on the fly a non-packaged source code, as it will be made in the packaged version (aka with uglify)
 * `npm run build` to create a distributable source ready to be packaged into an extension
