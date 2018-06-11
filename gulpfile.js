@@ -52,12 +52,13 @@ gulp.task('scripts', ['eslint'], function() {
 	gulp.src([
 		'./node_modules/jquery/dist/jquery.min.js',
 		'./node_modules/marked/marked.min.js'
-	])
-		.pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
-	return gulp.src('src/scripts/*.js')
-		.pipe(stripdebug())
-		.pipe(uglify())
-		.pipe(gulp.dest('./' + distFolder + '/scripts'));
+	]).pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
+
+	let task = gulp.src('src/scripts/*.js').pipe(stripdebug());
+	if (process.argv[3] !== '--debug') {
+		task = task.pipe(uglify())
+	}
+	return task.pipe(gulp.dest('./' + distFolder + '/scripts'));
 });
 
 //minify styles
