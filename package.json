@@ -1,6 +1,6 @@
 {
   "name": "tildes-extended",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Collection of QoL features for Tildes.net",
   "main": "index.js",
   "devDependencies": {

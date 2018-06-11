@@ -9,28 +9,30 @@ chrome.storage.local.get({
   const notInRoot = window.location.pathname !== '/';
 
   if (jumpToNewComment_enabled && notInRoot) {
-    $(`<input id="TE_scrollToNewComments"
-        type="button"
-        class="btn btn-primary fixed-bottom-right">
-    `).appendTo($("body"));
-    $("#TE_scrollToNewComments").hide();
+    if(!$("#TE_scrollToNewComments").length) {
+      $(`<input id="TE_scrollToNewComments"
+          type="button"
+          class="btn btn-primary fixed-bottom-right">
+      `).appendTo($("body"));
 
-    chooseButton();
+      chooseButton();
+    }
   }
 });
 
 function chooseButton() {
+  $('#TE_scrollToNewComments').off('click');
+  $("#TE_scrollToNewComments").hide();
   if($(".is-comment-new").length) {
     $("#TE_scrollToNewComments").val('Next New Comment');
     $('#TE_scrollToNewComments').on('click', (e) => { __te_scrollToNewComment(e) });
     $("#TE_scrollToNewComments").show();
   } else {
     $("#TE_scrollToNewComments").val('Back to Top');
-    $('#TE_scrollToNewComments').off('click');
     $('#TE_scrollToNewComments').on('click', (e) => { __te_scrollToTop(e) });
-    if ($(window).scrollTop() > 250)
+    if ($(window).scrollTop() > 250){
       $("#TE_scrollToNewComments").show();
-
+    }
     backTopListener();
   }
 }
