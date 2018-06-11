@@ -69,7 +69,10 @@ function populateLabels($el, labels) {
   });
 
   // Determine dark/bright theme and adjusting the css accordingly
-  $el.find("span[id^=TE_label]").colourBrightness();
+  const foundLabels = $el.find("span[id^=TE_label]");
+  if (foundLabels.length) {
+    $el.find("span[id^=TE_label]").colourBrightness();
+  }
 
   // Listener on 'click' for labels
   $el.find("span[id^=TE_label]").on('click', (e) => editLabel(e));
@@ -149,16 +152,11 @@ $.fn.colourBrightness = function(){
         $el = $el.parent();
       }
       return bgColor;
-    } else {
-      return;
     }
   }
 
   let r,g,b,brightness;
   let colour = getBackgroundColor(this);
-
-  if (!colour)
-    return;
 
   if (colour.match(/^rgb/)) {
     colour = colour.match(/rgba?\(([^)]+)\)/)[1];
