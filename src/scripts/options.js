@@ -27,6 +27,9 @@ const defaultSettings = {
   },
   usersLabel: {
     enabled: true
+  },
+  stickyHeader: {
+    enabled: true
   }
 };
 
@@ -76,6 +79,8 @@ function loadOptions() {
     $('#markdown_preview_enabled').prop("checked", config.tildesExtendedSettings.markdownPreview.enabled);
     // Users Label
     $('#users_label_enabled').prop("checked", config.tildesExtendedSettings.usersLabel.enabled);
+    // Sticky Header
+    $('#sticky_header_enabled').prop("checked", config.tildesExtendedSettings.stickyHeader.enabled);
   });
 }
 
@@ -98,6 +103,9 @@ function saveOptions() {
   }
   options.usersLabel = {
     enabled: $('#users_label_enabled').prop("checked")
+  }
+  options.stickyHeader = {
+    enabled: $('#sticky_header_enabled').prop("checked")
   }
   // TODO: This is a mess and should be rewritten in a better way
   if (options.customStyle.enabled) {
