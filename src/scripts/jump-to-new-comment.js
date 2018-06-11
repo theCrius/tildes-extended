@@ -6,9 +6,9 @@ chrome.storage.local.get({
 }, function(res) {
   // clog(res);
   const jumpToNewComment_enabled = res.tildesExtendedSettings.jumpToNewComment.enabled;
-  const inTopic = window.location.pathname !== '/';
+  const notInRoot = window.location.pathname !== '/';
 
-  if (jumpToNewComment_enabled && inTopic) {
+  if (jumpToNewComment_enabled && notInRoot) {
     $(`<input id="TE_scrollToNewComments"
         type="button"
         class="btn btn-primary fixed-bottom-right">

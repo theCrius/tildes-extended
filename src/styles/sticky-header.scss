@@ -1,0 +1,21 @@
+.TE-sticky-header {
+  position: fixed;
+  padding-bottom: 10px !important;
+  width: 100%;
+  top: 0px;
+  z-index: 1000;
+}
+
+.TE-topic-title {
+  position: fixed;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  text-align: center;
+  width: 100%;
+  top: 50px;
+  z-index: 990;
+}
+
+.TE-sticky-header-main {
+  padding-top: 100px;
+}
