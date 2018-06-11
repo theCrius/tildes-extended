@@ -18,7 +18,8 @@ chrome.storage.local.get({
 function scrollListener() {
   $(window).on('scroll', () => {
     if(inTopic) {
-      if ($(window).scrollTop() > $(".topic-full-text").outerHeight()) {
+      const $opMessage = $(".topic-full-text").length ? $(".topic-full-text") : $(".topic-full-link");
+      if ($(window).scrollTop() > $opMessage.outerHeight()) {
         $("#site-header").addClass('TE-sticky-header');
         $("#site-header").css('background-color', $("body").css('background-color'));
         if (!$("#TE_topic_title").length) {
