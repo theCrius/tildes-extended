@@ -139,6 +139,7 @@ function closeEditBox(e) {
 $.fn.colourBrightness = function(){
   function getBackgroundColor($el) {
     let bgColor = "";
+    if ($el.length) {
     while($el[0].tagName.toLowerCase() != "html") {
       bgColor = $el.css("background-color");
       if(bgColor != "rgba(0, 0, 0, 0)" && bgColor != "transparent") {
@@ -147,10 +148,16 @@ $.fn.colourBrightness = function(){
       $el = $el.parent();
     }
     return bgColor;
+    } else {
+      return;
+    }
   }
 
-  let r,g,b,brightness,
-      colour = getBackgroundColor(this);
+  let r,g,b,brightness;
+  let colour = getBackgroundColor(this);
+
+  if (!colour)
+    return;
 
   if (colour.match(/^rgb/)) {
     colour = colour.match(/rgba?\(([^)]+)\)/)[1];
