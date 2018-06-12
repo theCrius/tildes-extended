@@ -51,11 +51,13 @@ gulp.task('eslint', () => {
 gulp.task('scripts', ['eslint'], function() {
 	gulp.src([
 		'./node_modules/jquery/dist/jquery.min.js',
-		'./node_modules/marked/marked.min.js'
+		'./node_modules/marked/marked.min.js',
+		'./node_modules/popper.js/dist/popper.min.js',
+		'./node_modules/bootstrap/dist/js/bootstrap.min.js'
 	]).pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
 
 	let task = gulp.src('src/scripts/*.js').pipe(stripdebug());
-	if (process.argv[3] !== '--debug') {
+	if (process.argv[3] !== '--debug-scripts') {
 		task = task.pipe(uglify())
 	}
 	return task.pipe(gulp.dest('./' + distFolder + '/scripts'));
@@ -63,6 +65,10 @@ gulp.task('scripts', ['eslint'], function() {
 
 //minify styles
 gulp.task('styles', function() {
+	gulp.src([
+		'./node_modules/bootstrap/dist/css/bootstrap.min.css'
+	]).pipe(gulp.dest('./' + distFolder + '/styles/vendors'));
+
 	return gulp.src('./src/styles/**/*.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('./' + distFolder + '/styles'));

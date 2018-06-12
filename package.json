@@ -17,14 +17,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "serve": "gulp watch --debug",
+    "serve": "gulp watch --debug-scripts",
     "serve:build": "gulp watch",
     "build": "gulp"
   },
   "author": "Claudio Vallesi",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^4.1.1",
     "jquery": "^3.3.1",
-    "marked": "^0.4.0"
+    "marked": "^0.4.0",
+    "popper.js": "^1.14.3"
   }
 }
