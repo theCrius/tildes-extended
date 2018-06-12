@@ -145,7 +145,7 @@ function storeConfig(options) {
     $('#options_save').attr('disabled', false);
     $('#options_status').removeClass();
     $('#options_status').addClass('success');
-    $('#options_status').html('Options Saved!<br>Remeber to refresh Tildes.net for the changes to take effect!');
+    $('#options_status').html('Options Saved!<br>Remember to refresh Tildes.net for the changes to take effect!');
     setTimeout(function() {
       $('#options_status').removeClass();
       $('#options_status').html('');
