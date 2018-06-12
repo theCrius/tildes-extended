@@ -52,7 +52,7 @@ gulp.task('scripts', ['eslint'], function() {
 	gulp.src([
 		'./node_modules/jquery/dist/jquery.min.js',
 		'./node_modules/marked/marked.min.js',
-		'./node_modules/popper.js/dist/popper.min.js',
+		'./node_modules/popper.js/dist/umd/popper.min.js',
 		'./node_modules/bootstrap/dist/js/bootstrap.min.js'
 	]).pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
 
