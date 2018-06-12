@@ -1,3 +1,13 @@
 #features>div:not(.selected) {
-    display: none;
+  display: none;
+}
+
+#feature_list>li:not(.active) {
+  transition: background-color 0.4s;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #dddddd;
+    transition: background-color 0.4s;
+  }
 }
