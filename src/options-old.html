@@ -2,33 +2,25 @@
 <html>
 
 <head>
-	<meta charset="utf-8" />
+	<meta charset="utf-8"/>
 	<title>Tildes Extended Options</title>
-	<link rel="stylesheet" type="text/css" href="styles/vendors/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="styles/options.css">
 </head>
 
-<body class="container">
-	<h2 class="my-4">Tildes Extended Settings</h2>
-	<div class="row">
-		<div class="col-4">
-			<ul class="list-group mb-2">
-				<li class="list-group-item active">Link In New Tab</li>
-				<li class="list-group-item">Jump To New Comment</li>
-				<li class="list-group-item">Markdown Preview</li>
-				<li class="list-group-item">Users Label</li>
-				<li class="list-group-item">Sticky Header</li>
-				<li class="list-group-item">Use Custom Styles</li>
-			</ul>
-			<button type="button" id="options_save" class="btn btn-primary btn-block">Save</button>
-		</div>
-		<div class="col-8">
-			<div id="link_new_tab" class="selected">
-				<h4>Open links in a new tab</h4>
+<body class="options-body">
+
+	<div class="options-container">
+		<div class="options-content">
+			<h2>Tildes Extended Settings</h2>
+			<form>
+				<p>Customize your Tildes Extended then press 'save' when you're done!</p>
+				<hr>
+				<h3>Link in New Tab</h3>
 				<div>
 					<input type="checkbox" id="link_new_tab_enabled">
 					<label for="link_new_tab_enabled">Activate this feature</label>
 				</div>
-				<h4 class="mt-3">Select which links you want to be opened in a new tab</h4>
+				<p>Select which links you want to be opened in a new tab:</p>
 				<div>
 					<input type="checkbox" id="link_new_tab_type_text_submissions" name="text_submissions">
 					<label for="link_new_tab_type_text_submissions">Text Submissions</label>
@@ -49,53 +41,51 @@
 					<input type="checkbox" id="link_new_tab_type_users" name="users">
 					<label for="link_new_tab_type_users">Users Profile</label>
 				</div>
-			</div>
-			<div id="jump_new_comment">
-				<h4>Jump to new comment</h4>
+				<hr>
+				<h3>Jump to New Comment</h3>
 				<div>
 					<input type="checkbox" id="jump_new_comment_enabled">
 					<label for="jump_new_comment_enabled">Activate this feature</label>
 				</div>
-			</div>
-			<div id="markdown_preview">
-				<h4>Markdown preview</h4>
+				<hr>
+				<h3>Markdown Preview</h3>
 				<div>
 					<input type="checkbox" id="markdown_preview_enabled">
 					<label for="markdown_preview_enabled">Activate this feature</label>
 				</div>
-			</div>
-			<div id="users_label">
-				<h4>Users label</h4>
+				<hr>
+				<h3>Users Label</h3>
 				<div>
 					<input type="checkbox" id="users_label_enabled">
 					<label for="users_label_enabled">Activate this feature</label>
 				</div>
-			</div>
-			<div id="sticky_header">
-				<h4>Sticky header</h4>
+				<hr>
+				<h3>Sticky Header</h3>
 				<div>
 					<input type="checkbox" id="sticky_header_enabled">
 					<label for="sticky_header_enabled">Activate this feature</label>
 				</div>
-			</div>
-			<div id="custom_styles">
-				<h4>Use custom styles</h4>
+				<hr>
+				<h3>Use Custom Styles</h3>
 				<div>
 					<input type="checkbox" id="custom_styles_enabled">
 					<label for="custom_styles_enabled">Activate this feature</label>
 				</div>
-				<div id="custom_style_url_div">
-					<input class="mb-2" type="url" id="custom_styles_url" value="" placeholder="https://something.com/stylesheet.css" size="45">
+				<div id="custom_style_url_div" class="text-center">
+					<br><input class="mb-5" type="url" id="custom_styles_url" value="" placeholder="https://something.com/stylesheet.css" size="45">
 				</div>
-			</div>
-			<div class="options-notifications">
-				<div id="options_status"></div>
-			</div>
+				<hr>
+				<div class="options-actions">
+					<button id="options_save" type="button"> Save </button>
+				</div>
+				<div class="options-notifications">
+					<div id="options_status"></div>
+				</div>
+			</form>
 		</div>
 	</div>
+
 	<script src="scripts/vendors/jquery.min.js"></script>
-	<script src="scripts/vendors/popper.min.js"></script>
-	<script src="scripts/vendors/bootstrap.min.js"></script>
 	<script src="scripts/options.js"></script>
 </body>
 
