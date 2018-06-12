@@ -153,5 +153,21 @@ function storeConfig(options) {
   });
 }
 
+// Feature display switcher
+function changeSelectedFeature() {
+  // Each feature list item has an id of "feature_list", each feature has a corresponding id of "feature"
+  // So we can get each feature id by reducing the 5 last characters of the feature list item's id
+  // There's probably a better way to do this, but this one's easy as long as we're consistent
+  const selectedFeature = this.id.substring(this.id, this.id.length - 5);
+
+  // If we're selecting the one that's already selected just return
+  if ($(`#${selectedFeature}`).hasClass('selected')) { return; }
+  
+  // Remove the selected class from whichever was previously selected and add it to the one we want to select
+  $('.selected').removeClass('selected');
+  $(`#${selectedFeature}`).addClass('selected');
+}
+
+$('#feature_list>li').on('click', changeSelectedFeature)
 $('#options_save').on('click', saveOptions);
 $(document).on('DOMContentLoaded', loadOptions);
