@@ -166,6 +166,10 @@ function changeSelectedFeature() {
   // Remove the selected class from whichever was previously selected and add it to the one we want to select
   $('.selected').removeClass('selected');
   $(`#${selectedFeature}`).addClass('selected');
+
+  // Also switch the active classes on the list items
+  $('#feature_list>li').removeClass('active');
+  $(this).addClass('active');
 }
 
 $('#feature_list>li').on('click', changeSelectedFeature)
