@@ -1,25 +1,88 @@
-#features>div:not(.selected) {
-  display: none;
+$background:         #073642;
+$bg-alternate:       #002b36;
+$foreground:         #eee8d5;
+$selection-standard: #268bd2;
+$selection-hover:    #2aa198;
+$selection-active:   #6c71c4;
+$error:              #dc322f;
+$success:            #859900;
+
+body {
+  color: $foreground;
+  background-color: $background;
 }
 
-#feature_list>li:not(.active) {
-  transition: background-color 0.4s;
+textarea {
+  border: 2px solid $background;
+  color: $foreground;
+  background-color: $bg-alternate;
+  padding: 4px 8px;
+}
 
-  &:hover {
-    cursor: pointer;
-    background-color: #dddddd;
-    transition: background-color 0.4s;
+button {
+  background-color: $bg-alternate;
+
+  &.btn-primary {
+    background-color: $selection-standard;
+
+    &:hover {
+      background-color: $selection-hover;
+    }
+
+    &:active {
+      background-color: $selection-active;
+    }
   }
 }
 
-.text-center {
-  text-align: center;
+.popover {
+  background-color: $background;
+
+  &, &>*:not(.arrow) {
+    color: $foreground;
+    background-color: $bg-alternate;
+  }
+
+  &>.arrow {
+    display: none;
+  }
+
+  &>h3 {
+    &.error {
+      background-color: $error;
+      border-color: $error;
+    }
+
+    &.success {
+      background-color: $success;
+      border-color: $success;
+    }
+
+    &::before {
+      border: none !important;
+    }
+  }
 }
 
-.mt-5 {
-  margin-top: 5px;
+.list-group-item {
+  background-color: $bg-alternate;
+
+  &.active {
+    background-color: $selection-active;
+    border-color: $selection-active;
+  }
+
+  &:not(.active) {
+    transition: background-color 0.4s;
+  
+    &:hover {
+      cursor: pointer;
+      background-color: $selection-hover;
+      transition: background-color 0.4s;
+    }
+  }
 }
 
-.mb-5 {
-  margin-bottom: 5px;
+#features>div:not(.selected) {
+  display: none;
 }

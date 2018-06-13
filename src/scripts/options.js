@@ -100,6 +100,8 @@ function loadOptions() {
 }
 
 function saveOptions() {
+  $('#options_save_popover').popover('hide');
+  $('.popover-header').removeClass(['success', 'error']);
   const options = {};
   options.linkNewTab = {
     enabled: $('#link_new_tab_enabled').prop('checked'),
@@ -129,13 +131,16 @@ function saveOptions() {
     if (options.customStyles.urls.length) {
       $('#options_save_popover').attr("data-original-title", 'Info');
       $('#options_save_popover').attr("data-content", 'Saving...');
+      $('#options_save_popover').popover('show');
       // Add custom user CSS sources
       options.customStyles.source = options.customStyles.localCss.length ? options.customStyles.localCss : '';
       //Add external resources
       const remoteSource = buildStylesheets(options.customStyles.urls)
       if (remoteSource.type === 'error') {
         $('#options_save_popover').attr("data-original-title", 'Error');
-        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :( <br>' + remoteSource.message);
+        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :(' + remoteSource.message);
+        $('#options_save_popover').popover('show');
+        $('.popover-header').addClass('error');
       } else {
         options.customStyles.source += remoteSource;
         storeConfig(options);
@@ -182,6 +187,8 @@ function storeConfig(options) {
     clog('Config updated:', options);
     $('#options_save_popover').attr("data-original-title", 'Success');
     $('#options_save_popover').attr("data-content", 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
+    $('#options_save_popover').popover('show');
+    $('.popover-header').addClass('success');
     setTimeout(function () {
       $('#options_save_popover').popover('hide');
     }, 5000);
