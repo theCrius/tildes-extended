@@ -34,6 +34,8 @@ const defaultSettings = {
   }
 };
 
+loadOptions();
+
 function loadOptions() {
   if (navigator.userAgent.indexOf("Firefox") !== -1) {
     $("#custom_styles_url_div")
@@ -42,6 +44,10 @@ function loadOptions() {
     $("#custom_styles_url_div")
       .append("<br><span>Please be aware that we're not checking the CSS validity</span>")
   }
+
+  $('[data-toggle="popover"]').popover({
+    delay: {show: 250, hide: 250}
+  })
 
   chrome.storage.local.get({
     tildesExtendedSettings: defaultSettings
@@ -69,19 +75,14 @@ function loadOptions() {
     $('#sticky_header_enabled').prop("checked", config.tildesExtendedSettings.stickyHeader.enabled);
     // Load Custom Styles
     $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled);
-    $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(','));
-    $('#custom_styles_textarea').val(config.tildesExtendedSettings.customStyles.customCss);
-    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled)) {
-      $('#custom_styles_urls').attr('disabled', false);
-      $('#custom_styles_local').attr('disabled', false);
-
-      $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
-      $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.localCss);
-    }
+    $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
+    $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.customCss);
     $('#custom_styles_enabled').change(function() {
         if ($(this).is(':checked')) {
           $('#custom_styles_urls').attr('disabled', false);
           $('#custom_styles_local').attr('disabled', false);
+          $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
+          $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.localCss);
         } else {
           $('#custom_styles_urls').attr('disabled', true);
           $('#custom_styles_local').attr('disabled', true);
@@ -94,9 +95,8 @@ function loadOptions() {
 }
 
 function saveOptions() {
-  $('#options_save').attr('disabled', true);
-  updateStatus('Saving...', 'loading');
-
+  $('#options_save_popover').popover('hide');
+  $('.popover-header').removeClass(['success', 'error']);
   const options = {};
   options.linkNewTab = {
     enabled: $('#link_new_tab_enabled').prop('checked'),
@@ -110,26 +110,34 @@ function saveOptions() {
   };
   options.stickyHeader = {
     enabled: $('#sticky_header_enabled').prop("checked")
-  }
+  };
   options.usersLabel = {
     enabled: $('#users_label_enabled').prop("checked")
+  };
+  options.stickyHeader = {
+    enabled: $('#sticky_header_enabled').prop("checked")
   };
   options.customStyles = {
     enabled: $('#custom_styles_enabled').prop('checked'),
     localCss: $('#custom_styles_local').val(),
     urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
   };
-
   if (options.customStyles.enabled) {
     if (options.customStyles.urls.length) {
-      // Add custom user CSS sources
-      options.customStyles.source = options.customStyles.localCss.length ? options.customStyles.localCss : '';
+      $('#options_save_popover').attr("data-original-title", 'Info');
+      $('#options_save_popover').attr("data-content", 'Saving...');
+      $('#options_save_popover').popover('show');
       //Add external resources
-      const urlSource = buildStylesheets(options.customStyles.urls)
-      if (urlSource.type === 'error') {
-        updateStatus('Error with remote stylesheets: <br>' + urlSource.message, 'failure', 10000);
+      const remoteSource = buildStylesheets(options.customStyles.urls)
+      if (remoteSource.type === 'error') {
+        $('#options_save_popover').attr("data-original-title", 'Error');
+        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :(' + remoteSource.message);
+        $('#options_save_popover').popover('show');
+        $('.popover-header').addClass('error');
       } else {
-        options.customStyles.source += urlSource;
+        options.customStyles.source += remoteSource;
+        // Add custom user CSS sources
+        options.customStyles.source += '\r\n\r\n'+ options.customStyles.localCss.length ? options.customStyles.localCss : '';
         storeConfig(options);
       }
     } else {
@@ -172,25 +180,34 @@ function storeConfig(options) {
     tildesExtendedSettings: options
   }, function() {
     clog('Config updated:', options);
-
-    $('#options_save').attr('disabled', false);
-    updateStatus('Options Saved!<br>Remember to refresh Tildes.net for the changes to take effect!', 'success', 6000)
+    $('#options_save_popover').attr("data-original-title", 'Success');
+    $('#options_save_popover').attr("data-content", 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
+    $('#options_save_popover').popover('show');
+    $('.popover-header').addClass('success');
+    setTimeout(function () {
+      $('#options_save_popover').popover('hide');
+    }, 5000);
   });
 }
 
-// Manage Feedback to the user
-function updateStatus(message, cssClass, removeAfter = false) {
-  $('#options_status').removeClass();
-  $('#options_status').addClass(cssClass);
-  $('#options_status').html(message);
+// Feature display switcher
+function changeSelectedFeature() {
+  // Each feature list item has an id of "feature_list", each feature has a corresponding id of "feature"
+  // So we can get each feature id by reducing the 5 last characters of the feature list item's id
+  // There's probably a better way to do this, but this one's easy as long as we're consistent
+  const selectedFeature = this.id.substring(this.id, this.id.length - 5);
 
-  if(removeAfter) {
-    setTimeout(function() {
-      $('#options_status').removeClass();
-      $('#options_status').html('');
-    }, removeAfter);
-  }
+  // If we're selecting the one that's already selected just return
+  if ($(`#${selectedFeature}`).hasClass('selected')) { return; }
+
+  // Remove the selected class from whichever was previously selected and add it to the one we want to select
+  $('.selected').removeClass('selected');
+  $(`#${selectedFeature}`).addClass('selected');
+
+  // Also switch the active classes on the list items
+  $('#feature_list>li').removeClass('active');
+  $(this).addClass('active');
 }
 
+$('#feature_list>li').on('click', changeSelectedFeature);
 $('#options_save').on('click', saveOptions);
-$(document).on('DOMContentLoaded', loadOptions);
