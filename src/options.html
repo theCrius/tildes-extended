@@ -2,25 +2,36 @@
 <html>
 
 <head>
-	<meta charset="utf-8"/>
+	<meta charset="utf-8" />
 	<title>Tildes Extended Options</title>
+	<link rel="stylesheet" type="text/css" href="styles/vendors/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="styles/options.css">
 </head>
 
-<body class="options-body">
-
-	<div class="options-container">
-		<div class="options-content">
-			<h2>Tildes Extended Settings</h2>
-			<form>
-				<p>Customize your Tildes Extended then press 'save' when you're done!</p>
-				<hr>
-				<h3>Link in New Tab</h3>
+<body class="container">
+	<h2 class="my-4">Tildes Extended Settings</h2>
+	<div class="row">
+		<div class="col-4">
+			<ul id="feature_list" class="list-group mb-2">
+				<li id="link_new_tab_list" class="list-group-item active">Link In New Tab</li>
+				<li id="jump_new_comment_list" class="list-group-item">Jump To New Comment</li>
+				<li id="markdown_preview_list" class="list-group-item">Markdown Preview</li>
+				<li id="users_label_list" class="list-group-item">Users Label</li>
+				<li id="sticky_header_list" class="list-group-item">Sticky Header</li>
+				<li id="custom_styles_list" class="list-group-item">Use Custom Styles</li>
+			</ul>
+			<span id="options_save_popover" data-toggle="popover" data-placement="bottom">
+				<button type="button" id="options_save" class="btn btn-primary btn-block">Save</button>
+			</span>
+		</div>
+		<div id="features" class="col-8">
+			<div id="link_new_tab" class="selected">
+				<h4>Open links in a new tab</h4>
 				<div>
 					<input type="checkbox" id="link_new_tab_enabled">
 					<label for="link_new_tab_enabled">Activate this feature</label>
 				</div>
-				<p>Select which links you want to be opened in a new tab:</p>
+				<h4 class="mt-3">Select which links you want to be opened in a new tab</h4>
 				<div>
 					<input type="checkbox" id="link_new_tab_type_text_submissions" name="text_submissions">
 					<label for="link_new_tab_type_text_submissions">Text Submissions</label>
@@ -41,54 +52,56 @@
 					<input type="checkbox" id="link_new_tab_type_users" name="users">
 					<label for="link_new_tab_type_users">Users Profile</label>
 				</div>
-				<hr>
-				<h3>Jump to New Comment</h3>
+			</div>
+			<div id="jump_new_comment">
+				<h4>Jump to new comment</h4>
 				<div>
 					<input type="checkbox" id="jump_new_comment_enabled">
 					<label for="jump_new_comment_enabled">Activate this feature</label>
 				</div>
-				<hr>
-				<h3>Markdown Preview</h3>
+			</div>
+			<div id="markdown_preview">
+				<h4>Markdown preview</h4>
 				<div>
 					<input type="checkbox" id="markdown_preview_enabled">
 					<label for="markdown_preview_enabled">Activate this feature</label>
 				</div>
-				<hr>
-				<h3>Users Label</h3>
+			</div>
+			<div id="users_label">
+				<h4>Users label</h4>
 				<div>
 					<input type="checkbox" id="users_label_enabled">
 					<label for="users_label_enabled">Activate this feature</label>
 				</div>
-				<hr>
-				<h3>Sticky Header</h3>
+			</div>
+			<div id="sticky_header">
+				<h4>Sticky header</h4>
 				<div>
 					<input type="checkbox" id="sticky_header_enabled">
 					<label for="sticky_header_enabled">Activate this feature</label>
 				</div>
-				<hr>
-				<h3>Use Custom Styles</h3>
+			</div>
+			<div id="custom_styles">
+				<h4>Use custom styles</h4>
 				<div>
 					<input type="checkbox" id="custom_styles_enabled">
 					<label for="custom_styles_enabled">Activate this feature</label>
 				</div>
-				<div id="custom_styles_urls_div" class="text-center">
-					<input class="full-width mb-5" type="url" id="custom_styles_urls" placeholder="https://example.net/styles-1.css, https://example.net/styles-2.css">
+				<div id="custom_style_url_div">
+					<textarea cols="50" rows="3" class="mb-2" id="custom_styles_urls" placeholder="https://something.com/stylesheet-1.css, https://something.com/stylesheet-1.css, ..."></textarea>
 				</div>
 				<div>
-					<textarea class="full-width mb-5" id="custom_styles_local" placeholder="Enter any additional CSS here." rows="5"></textarea>
+					<textarea cols="50" rows="3" class="mb-2" id="custom_styles_local" placeholder="Enter any additional CSS here."></textarea>
 				</div>
-				<hr>
-				<div class="options-actions">
-					<button id="options_save" type="button"> Save </button>
-				</div>
-				<div class="options-notifications">
-					<div id="options_status"></div>
-				</div>
-			</form>
+			</div>
+			<div class="options-notifications">
+				<div id="options_status"></div>
+			</div>
 		</div>
 	</div>
-
 	<script src="scripts/vendors/jquery.min.js"></script>
+	<script src="scripts/vendors/popper.min.js"></script>
+	<script src="scripts/vendors/bootstrap.min.js"></script>
 	<script src="scripts/options.js"></script>
 </body>
 
