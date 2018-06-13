@@ -34,6 +34,8 @@ const defaultSettings = {
   }
 };
 
+loadOptions();
+
 function loadOptions() {
   if (navigator.userAgent.indexOf("Firefox") !== -1) {
     $("#custom_styles_url_div")
@@ -111,29 +113,33 @@ function saveOptions() {
   };
   options.stickyHeader = {
     enabled: $('#sticky_header_enabled').prop("checked")
-  }
+  };
   options.usersLabel = {
     enabled: $('#users_label_enabled').prop("checked")
-  }
+  };
   options.stickyHeader = {
     enabled: $('#sticky_header_enabled').prop("checked")
-  }
-  // TODO: This is a mess and should be rewritten in a better way
-  if (options.customStyle.enabled) {
-    if (options.customStyle.url) {
+  };
+  options.customStyles = {
+    enabled: $('#custom_styles_enabled').prop('checked'),
+    localCss: $('#custom_styles_local').val(),
+    urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
+  };
+  if (options.customStyles.enabled) {
+    if (options.customStyles.urls.length) {
       $('#options_save_popover').attr("data-original-title", 'Info');
       $('#options_save_popover').attr("data-content", 'Saving...');
-      $.get(options.customStyle.url).then((data) => {
-        options.customStyle.source = data;
-        storeConfig(options);
-      }).catch((err) => {
+      // Add custom user CSS sources
+      options.customStyles.source = options.customStyles.localCss.length ? options.customStyles.localCss : '';
+      //Add external resources
+      const remoteSource = buildStylesheets(options.customStyles.urls)
+      if (remoteSource.type === 'error') {
         $('#options_save_popover').attr("data-original-title", 'Error');
-        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :(');
-        clog('ERROR LOADING CUSTOM STYLE:', err);
-        setTimeout(function() {
-          $('#options_save_popover').popover('hide');
-        }, 10000);
-      });
+        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :( <br>' + remoteSource.message);
+      } else {
+        options.customStyles.source += remoteSource;
+        storeConfig(options);
+      }
     } else {
       storeConfig(options);
     }
@@ -191,7 +197,7 @@ function changeSelectedFeature() {
 
   // If we're selecting the one that's already selected just return
   if ($(`#${selectedFeature}`).hasClass('selected')) { return; }
-  
+
   // Remove the selected class from whichever was previously selected and add it to the one we want to select
   $('.selected').removeClass('selected');
   $(`#${selectedFeature}`).addClass('selected');
@@ -201,6 +207,5 @@ function changeSelectedFeature() {
   $(this).addClass('active');
 }
 
-$('#feature_list>li').on('click', changeSelectedFeature)
+$('#feature_list>li').on('click', changeSelectedFeature);
 $('#options_save').on('click', saveOptions);
-$(document).on('DOMContentLoaded', loadOptions);
