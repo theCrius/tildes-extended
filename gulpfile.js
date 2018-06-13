@@ -15,7 +15,7 @@ const distFolder = 'dist';
 
 //clean build directory
 gulp.task('clean', function () {
-  return del('./' + distFolder + '/**/*');
+  return del.sync('./' + distFolder + '/**/*');
 });
 
 //copy static folders to build directory
