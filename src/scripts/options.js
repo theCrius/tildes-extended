@@ -42,6 +42,10 @@ function loadOptions() {
       .append("<br><span>Please be aware that we're not checking the CSS validity</span>")
   }
 
+  $('[data-toggle="popover"]').popover({
+    delay: {show: 250, hide: 250}
+  })
+
   chrome.storage.local.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
@@ -85,7 +89,6 @@ function loadOptions() {
 }
 
 function saveOptions() {
-  $('#options_save').attr('disabled', true);
   const options = {};
   options.linkNewTab = {
     enabled: $('#link_new_tab_enabled').prop('checked'),
@@ -110,22 +113,18 @@ function saveOptions() {
   // TODO: This is a mess and should be rewritten in a better way
   if (options.customStyle.enabled) {
     if (options.customStyle.url) {
-      $('#options_status').removeClass();
-      $('#options_status').addClass('loading');
-      $('#options_status').html('Saving...');
+      $('#options_save_popover').attr("data-original-title", 'Info');
+      $('#options_save_popover').attr("data-content", 'Saving...');
       $.get(options.customStyle.url).then((data) => {
         options.customStyle.source = data;
         storeConfig(options);
       }).catch((err) => {
-        $('#options_save').attr('disabled', false);
-        $('#options_status').removeClass();
-        $('#options_status').addClass('failure');
-        $('#options_status').html('Something went wrong with the CSS :(');
+        $('#options_save_popover').attr("data-original-title", 'Error');
+        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :(');
         clog('ERROR LOADING CUSTOM STYLE:', err);
         setTimeout(function() {
-          $('#options_status').removeClass();
-          $('#options_status').html('');
-        }, 3000);
+          $('#options_save_popover').popover('hide');
+        }, 10000);
       });
     } else {
       options.customStyle.source = null;
@@ -142,14 +141,11 @@ function storeConfig(options) {
     tildesExtendedSettings: options
   }, function() {
     clog('Config updated:', options);
-    $('#options_save').attr('disabled', false);
-    $('#options_status').removeClass();
-    $('#options_status').addClass('success');
-    $('#options_status').html('Options Saved!<br>Remember to refresh Tildes.net for the changes to take effect!');
-    setTimeout(function() {
-      $('#options_status').removeClass();
-      $('#options_status').html('');
-    }, 3000);
+    $('#options_save_popover').attr("data-original-title", 'Success');
+    $('#options_save_popover').attr("data-content", 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
+    setTimeout(function () {
+      $('#options_save_popover').popover('hide');
+    }, 5000);
   });
 }
 
