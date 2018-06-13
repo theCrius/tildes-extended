@@ -17,10 +17,11 @@ const defaultSettings = {
   jumpToNewComment: {
     enabled: true
   },
-  customStyle: {
+  customStyles: {
     enabled: false,
-    url: '',
-    source: null
+    urls: [],
+    customCss: '',
+    source: ''
   },
   markdownPreview: {
     enabled: true
@@ -35,10 +36,10 @@ const defaultSettings = {
 
 function loadOptions() {
   if (navigator.userAgent.indexOf("Firefox") !== -1) {
-    $("#custom_style_url_div")
+    $("#custom_styles_url_div")
       .append("<br><span>Note: Firefox will not allow this to be loaded unless you open <code>about:config</code>, search the flag <code>security.csp.enable</code> and disable it.</span>")
   } else {
-    $("#custom_style_url_div")
+    $("#custom_styles_url_div")
       .append("<br><span>Please be aware that we're not checking the CSS validity</span>")
   }
 
@@ -64,27 +65,35 @@ function loadOptions() {
     $('#link_new_tab_type_users').prop("checked", config.tildesExtendedSettings.linkNewTab.types.findIndex(i => i === 'users') !== -1);
     // Jump to New Comment
     $('#jump_new_comment_enabled').prop("checked", config.tildesExtendedSettings.jumpToNewComment.enabled);
-    // Load Custom Styles
-    $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled);
-    $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
-    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyle.enabled)) {
-      $('#custom_styles_url').attr('disabled', false);
-      $('#custom_styles_url').val(config.tildesExtendedSettings.customStyle.url);
-    }
-    $('#custom_styles_enabled').change(function() {
-        if ($(this).is(':checked')) {
-          $('#custom_styles_url').attr('disabled', false);
-        } else {
-          $('#custom_styles_url').attr('disabled', true);
-          $('#custom_styles_url').val('');
-        }
-    });
     // Markdown Preview
     $('#markdown_preview_enabled').prop("checked", config.tildesExtendedSettings.markdownPreview.enabled);
     // Users Label
     $('#users_label_enabled').prop("checked", config.tildesExtendedSettings.usersLabel.enabled);
     // Sticky Header
     $('#sticky_header_enabled').prop("checked", config.tildesExtendedSettings.stickyHeader.enabled);
+    // Load Custom Styles
+    $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled);
+    $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(','));
+    $('#custom_styles_textarea').val(config.tildesExtendedSettings.customStyles.customCss);
+    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled)) {
+      $('#custom_styles_urls').attr('disabled', false);
+      $('#custom_styles_local').attr('disabled', false);
+
+      $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
+      $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.localCss);
+    }
+    $('#custom_styles_enabled').change(function() {
+        if ($(this).is(':checked')) {
+          $('#custom_styles_urls').attr('disabled', false);
+          $('#custom_styles_local').attr('disabled', false);
+        } else {
+          $('#custom_styles_urls').attr('disabled', true);
+          $('#custom_styles_local').attr('disabled', true);
+
+          $('#custom_styles_urls').val('');
+          $('#custom_styles_local').val('');
+        }
+    });
   });
 }
 
@@ -97,12 +106,11 @@ function saveOptions() {
   options.jumpToNewComment = {
     enabled: $('#jump_new_comment_enabled').prop('checked')
   };
-  options.customStyle = {
-    enabled: $('#custom_styles_enabled').prop('checked'),
-    url: $('#custom_styles_url').val()
-  };
   options.markdownPreview = {
     enabled: $('#markdown_preview_enabled').prop("checked")
+  };
+  options.stickyHeader = {
+    enabled: $('#sticky_header_enabled').prop("checked")
   }
   options.usersLabel = {
     enabled: $('#users_label_enabled').prop("checked")
@@ -127,11 +135,36 @@ function saveOptions() {
         }, 10000);
       });
     } else {
-      options.customStyle.source = null;
       storeConfig(options);
     }
   } else {
+    options.customStyles.source = null;
     storeConfig(options);
+  }
+}
+
+// Reach for remote resources and build the CSS to inject
+// TODO: Use a synchronous approach. Everyone welcome to make this asynchronous
+// TODO: just remember that saveOptions() as well will need to change to support it
+function buildStylesheets(urls) {
+  try {
+    let externalSources = '';
+    // Concatenate all external CSS sources
+    if (urls.length) {
+      for (let i = 0; i < urls.length; i++) {
+        const res = $.ajax(urls[i], {'async': false});
+        // clog('RES:', res.status, res.responseText)
+        if (200 <= res.status && res.status < 300) {
+          externalSources += '\r\n\r\n' + res.responseText;
+        } else {
+          throw `${urls[i]} returned: ${res.statusText} (${res.status})`;
+        }
+      }
+    }
+    return externalSources;
+  } catch(err) {
+    // clog('something wrong in building the styles:', err);
+    return {'type': 'error', 'message': err};
   }
 }
 

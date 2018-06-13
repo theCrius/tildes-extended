@@ -2,14 +2,14 @@
 // const clog = console.log.bind(console);
 
 chrome.storage.local.get({
-  tildesExtendedSettings: {customStyle: {}}
+  tildesExtendedSettings: {customStyles: {}}
 }, function(res) {
   // clog(res);
-  const customStyles_enabled = res.tildesExtendedSettings.customStyle.enabled;
+  const customStyles_enabled = res.tildesExtendedSettings.customStyles.enabled;
 
   if(customStyles_enabled) {
     $("#customStylesheet").remove();
-    const customStyles_source = res.tildesExtendedSettings.customStyle.source;
+    const customStyles_source = res.tildesExtendedSettings.customStyles.source;
     if (customStyles_source) {
       $('<style type="text/css" id="customStylesheet">'+ customStyles_source +'</style>').appendTo("head");
     }
