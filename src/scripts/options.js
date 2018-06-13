@@ -75,19 +75,14 @@ function loadOptions() {
     $('#sticky_header_enabled').prop("checked", config.tildesExtendedSettings.stickyHeader.enabled);
     // Load Custom Styles
     $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled);
-    $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(','));
-    $('#custom_styles_textarea').val(config.tildesExtendedSettings.customStyles.customCss);
-    if($('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled)) {
-      $('#custom_styles_urls').attr('disabled', false);
-      $('#custom_styles_local').attr('disabled', false);
-
-      $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
-      $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.localCss);
-    }
+    $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
+    $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.customCss);
     $('#custom_styles_enabled').change(function() {
         if ($(this).is(':checked')) {
           $('#custom_styles_urls').attr('disabled', false);
           $('#custom_styles_local').attr('disabled', false);
+          $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
+          $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.localCss);
         } else {
           $('#custom_styles_urls').attr('disabled', true);
           $('#custom_styles_local').attr('disabled', true);
@@ -132,8 +127,6 @@ function saveOptions() {
       $('#options_save_popover').attr("data-original-title", 'Info');
       $('#options_save_popover').attr("data-content", 'Saving...');
       $('#options_save_popover').popover('show');
-      // Add custom user CSS sources
-      options.customStyles.source = options.customStyles.localCss.length ? options.customStyles.localCss : '';
       //Add external resources
       const remoteSource = buildStylesheets(options.customStyles.urls)
       if (remoteSource.type === 'error') {
@@ -143,6 +136,8 @@ function saveOptions() {
         $('.popover-header').addClass('error');
       } else {
         options.customStyles.source += remoteSource;
+        // Add custom user CSS sources
+        options.customStyles.source += '\r\n\r\n'+ options.customStyles.localCss.length ? options.customStyles.localCss : '';
         storeConfig(options);
       }
     } else {
