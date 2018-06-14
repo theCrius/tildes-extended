@@ -31,6 +31,11 @@ const defaultSettings = {
   },
   stickyHeader: {
     enabled: true
+  },
+  miscellaneous: {
+    randomTilde: {
+      enabled: false
+    }
   }
 };
 
@@ -91,6 +96,7 @@ function loadOptions() {
           $('#custom_styles_local').val('');
         }
     });
+    $('#random_tilde_enabled').prop("checked", config.tildesExtendedSettings.miscellaneous.randomTilde.enabled);
   });
 }
 
@@ -123,6 +129,11 @@ function saveOptions() {
     localCss: $('#custom_styles_local').val(),
     urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
   };
+  options.miscellaneous = {
+    randomTilde: {
+      enabled: $('#random_tilde_enabled').prop("checked")
+    }
+  }
   if (options.customStyles.enabled) {
     if (options.customStyles.urls.length) {
       $('#options_save_popover').attr("data-original-title", 'Info');
