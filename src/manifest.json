@@ -51,7 +51,8 @@
     "css": [
       "styles/jump-to-new-comment.css",
       "styles/users-label.css",
-      "styles/sticky-header.css"
+      "styles/sticky-header.css",
+      "styles/miscellaneous.css"
     ]
   }],
 
