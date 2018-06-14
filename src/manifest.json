@@ -60,5 +60,11 @@
     }
   },
 
+  "applications": {
+    "gecko": {
+      "id": "tildes_extended@thecrius.git"
+    }
+  },
+
   "content_security_policy": "script-src 'self'; object-src 'self'; style-src 'unsafe-inline'"
 }
