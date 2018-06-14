@@ -6,7 +6,7 @@ const inTopic = (!!window.location.pathname.split('/')[2]);
 // Can find name of a group but not an Id of a topic
 const inGroup = (window.location.pathname.split('/')[1] !== '') && (!window.location.pathname.split('/')[2]);
 
-chrome.storage.local.get({
+chrome.storage.sync.get({
   tildesExtendedSettings: {fixedHeader: {}}
 }, function(res) {
   // clog(res);

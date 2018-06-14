@@ -49,12 +49,12 @@ function loadOptions() {
     delay: {show: 250, hide: 250}
   })
 
-  chrome.storage.local.get({
+  chrome.storage.sync.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
     if(config.tildesExtendedSettings.initialSetup) {
       delete config.tildesExtendedSettings.initialSetup;
-      chrome.storage.local.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
+      chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
         clog('Initial Config stored:', config.tildesExtendedSettings);
       });
     }
@@ -176,7 +176,7 @@ function buildStylesheets(urls) {
 
 // Store in local storage
 function storeConfig(options) {
-  chrome.storage.local.set({
+  chrome.storage.sync.set({
     tildesExtendedSettings: options
   }, function() {
     clog('Config updated:', options);
