@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Tildes Extended",
   "description": "Browsers extension to improve Tildes.net UI/UX",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "homepage_url": "https://github.com/theCrius/tildes-extended",
   "permissions": [
     "tabs",
@@ -62,7 +62,7 @@
 
   "applications": {
     "gecko": {
-      "id": "tildes_extended@thecrius.git"
+      "id": "{457ce14b-ebe6-432a-a9c5-0212c747e074}"
     }
   },
 
