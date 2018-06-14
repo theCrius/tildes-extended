@@ -13,7 +13,6 @@ header {
   .TE-topic-title {
     margin-bottom: 0px;
     padding-left: 10px;
-    width: 75%;
     max-width: 75%;
 
     overflow: hidden;
@@ -22,6 +21,6 @@ header {
   }
 
   .TE-user-info {
-    margin-left: 10px !important;
+    display: none !important;
   }
 }

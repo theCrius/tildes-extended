@@ -31,7 +31,6 @@ function scrollListener() {
       } else {
         $("#site-header").removeClass('TE-sticky-header');
         $("#site-header").removeAttr('style');
-        $("#site-header").removeAttr('class');
         $(".logged-in-user-info").removeClass('TE-user-info');
         $("#TE_topic_title").remove();
         $("main").removeAttr('style');
@@ -40,10 +39,11 @@ function scrollListener() {
       if ($(window).scrollTop() > 50) {
         $("#site-header").addClass('TE-sticky-header');
         $("#site-header").css('background-color', $("body").css('background-color'));
+        $(".logged-in-user-info").addClass('TE-user-info');
       } else {
         $("#site-header").removeClass('TE-sticky-header');
         $("#site-header").removeAttr('style');
-        $("#site-header").removeAttr('class');
+        $(".logged-in-user-info").removeClass('TE-user-info');
       }
     }
   });
