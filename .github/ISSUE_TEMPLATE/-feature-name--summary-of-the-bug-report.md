@@ -1,28 +1,26 @@
 ---
-name: "[Feature Name] Summary of the Bug Report"
+name: "Bug Report"
 about: Create a report to help us improve
-
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!--- Provide a general summary of the issue in the Title above -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Expected Behavior
+<!--- Tell us what should happen -->
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Current Behavior
+<!--- Tell us what happens instead of the expected behavior -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## Screenshots
+<!--- Not mandatory, you can paste image in here directly -->
 
-**System Configuration:**
- - OS: [e.g. Windows 10 Pro, Ubuntu 16.04, iOs v10.11]
- - Browser [e.g. Chrome v60.1.x, Firefox v58.2.x]
+## Steps to Reproduce
+<!--- Provide a link to a live example, or an unambiguous set of steps to -->
+<!--- reproduce this bug. Include code to reproduce, if relevant -->
 
-**Additional context**
-Add any other context about the problem here.
+## Environment
+<!-- OS: [e.g. Windows 10 Pro, Ubuntu 16.04, iOs v10.11] -->
+<!-- Browser [e.g. Chrome v60.1.x, Firefox v58.2.x] -->
+
+## Additional notes
+<!--- Any other information you consider might be useful -->
