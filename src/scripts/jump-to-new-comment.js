@@ -6,6 +6,7 @@ chrome.storage.sync.get({
 }, function(res) {
   // clog(res);
   const jumpToNewComment_enabled = res.tildesExtendedSettings.jumpToNewComment.enabled;
+  const stickyHeader_enabled = res.tildesExtendedSettings.stickyHeader.enabled;
   const notInRoot = window.location.pathname !== '/';
 
   if (jumpToNewComment_enabled && notInRoot) {
@@ -15,17 +16,17 @@ chrome.storage.sync.get({
           class="btn btn-primary fixed-bottom-right">
       `).appendTo($("body"));
 
-      chooseButton();
+      chooseButton(stickyHeader_enabled);
     }
   }
 });
 
-function chooseButton() {
+function chooseButton(stickyHeader_enabled) {
   $('#TE_scrollToNewComments').off('click');
   $("#TE_scrollToNewComments").hide();
   if($(".is-comment-new").length) {
     $("#TE_scrollToNewComments").val('Next New Comment');
-    $('#TE_scrollToNewComments').on('click', (e) => { __te_scrollToNewComment(e) });
+    $('#TE_scrollToNewComments').on('click', (e) => { __te_scrollToNewComment(e, stickyHeader_enabled) });
     $("#TE_scrollToNewComments").show();
   } else {
     $("#TE_scrollToNewComments").val('Back to Top');
@@ -47,12 +48,13 @@ function backTopListener() {
   });
 }
 
-function __te_scrollToNewComment(e) {
+function __te_scrollToNewComment(e, stickyHeader_enabled) {
   e.preventDefault();
-  const $newComment = $(".is-comment-new").first();
   $("#TE_scrollToNewComments").attr('disabled', true);
+  const $newComment = $(".is-comment-new").first();
   // clog('Scrolling to', $newComment.attr('id'));
-  $("html, body").animate({ scrollTop: $newComment.offset().top }, 250, () => {
+  let scrollDestination = stickyHeader_enabled ? $newComment.offset().top-60 : $newComment.offset().top-10;
+  $("html, body").animate({ scrollTop: scrollDestination }, 250, () => {
     // clog('Removed new from:', $newComment.attr('id'));
     $newComment.removeClass('is-comment-new');
     $("#TE_scrollToNewComments").attr('disabled', false);
