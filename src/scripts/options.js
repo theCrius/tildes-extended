@@ -49,12 +49,12 @@ function loadOptions() {
     delay: {show: 250, hide: 250}
   })
 
-  chrome.storage.local.get({
+  chrome.storage.sync.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
     if(config.tildesExtendedSettings.initialSetup) {
       delete config.tildesExtendedSettings.initialSetup;
-      chrome.storage.local.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
+      chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
         clog('Initial Config stored:', config.tildesExtendedSettings);
       });
     }
@@ -95,6 +95,7 @@ function loadOptions() {
 }
 
 function saveOptions() {
+  setBadges();
   $('#options_save_popover').popover('hide');
   $('.popover-header').removeClass(['success', 'error']);
   const options = {};
@@ -176,7 +177,7 @@ function buildStylesheets(urls) {
 
 // Store in local storage
 function storeConfig(options) {
-  chrome.storage.local.set({
+  chrome.storage.sync.set({
     tildesExtendedSettings: options
   }, function() {
     clog('Config updated:', options);
@@ -209,5 +210,16 @@ function changeSelectedFeature() {
   $(this).addClass('active');
 }
 
+// Toggle enabled badges for the feature list
+function setBadges() {
+  $('#link_new_tab_list>.badge').toggle($('#link_new_tab_enabled').prop("checked"));
+  $('#jump_new_comment_list>.badge').toggle($('#jump_new_comment_enabled').prop("checked"));
+  $('#markdown_preview_list>.badge').toggle($('#markdown_preview_enabled').prop("checked"));
+  $('#users_label_list>.badge').toggle($('#users_label_enabled').prop("checked"));
+  $('#sticky_header_list>.badge').toggle($('#sticky_header_enabled').prop("checked"));
+  $('#custom_styles_list>.badge').toggle($('#custom_styles_enabled').prop("checked"));
+}
+
+$(document).ready(setBadges);
 $('#feature_list>li').on('click', changeSelectedFeature);
 $('#options_save').on('click', saveOptions);

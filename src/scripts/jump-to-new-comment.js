@@ -1,7 +1,7 @@
 /* globals $ */
 // const clog = console.log.bind(console);
 
-chrome.storage.local.get({
+chrome.storage.sync.get({
   tildesExtendedSettings: {jumpToNewComment: {}}
 }, function(res) {
   // clog(res);
