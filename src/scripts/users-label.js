@@ -2,7 +2,7 @@
 // const clog = console.log.bind(console);
 let labels = {};
 
-chrome.storage.local.get({
+chrome.storage.sync.get({
   tildesExtendedSettings: {usersLabel: {}}
 }, function(res) {
   // clog(res);
@@ -10,7 +10,7 @@ chrome.storage.local.get({
 
   if (usersLabel_enabled) {
     // Get all user's label
-    chrome.storage.local.get({
+    chrome.storage.sync.get({
       tildesExtendedUsersLabels: {}
     }, function(res_labels) {
       // clog(res_labels);
@@ -102,7 +102,7 @@ function updateLabel(e) {
       text: $("#edit_label_text").val(),
       color: $("#edit_label_color").val()
     };
-    chrome.storage.local.set({
+    chrome.storage.sync.set({
       tildesExtendedUsersLabels: labels
     }, function() {
       $("[id^='TE_label"+ $("#edit_label_id").val() +"']").removeClass();
@@ -118,7 +118,7 @@ function removeLabel(e) {
   e.preventDefault();
   if (labels[$("#edit_label_id").val()]) {
     delete labels[$("#edit_label_id").val()];
-    chrome.storage.local.set({
+    chrome.storage.sync.set({
       tildesExtendedUsersLabels: labels
     }, function() {
       $("[id^='TE_label"+ $("#edit_label_id").val() +"']").removeClass();
