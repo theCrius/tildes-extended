@@ -84,7 +84,7 @@ function loadOptions() {
     $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
     $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.customCss);
     $('#custom_styles_enabled').change(() => {
-        if ($(this).is(':checked')) {
+        if ($('#custom_styles_enabled').is(':checked')) {
           $('#custom_styles_urls').attr('disabled', false);
           $('#custom_styles_local').attr('disabled', false);
           $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
