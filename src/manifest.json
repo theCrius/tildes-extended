@@ -33,7 +33,11 @@
     "run_at": "document_start",
     "js": [
       "scripts/vendors/jquery.min.js",
-      "scripts/custom-styles.js"
+      "scripts/custom-styles.js",
+      "scripts/miscellaneous.js"
+    ],
+    "css": [
+      "styles/miscellaneous.css"
     ]
   },
   {

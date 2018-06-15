@@ -31,6 +31,12 @@ const defaultSettings = {
   },
   stickyHeader: {
     enabled: true
+  },
+  miscellaneous: {
+    enabled: false,
+    activeFeatures: {
+      randomTilde: false
+    }
   }
 };
 
@@ -77,7 +83,7 @@ function loadOptions() {
     $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled);
     $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
     $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.customCss);
-    $('#custom_styles_enabled').change(function() {
+    $('#custom_styles_enabled').change(() => {
         if ($(this).is(':checked')) {
           $('#custom_styles_urls').attr('disabled', false);
           $('#custom_styles_local').attr('disabled', false);
@@ -91,11 +97,19 @@ function loadOptions() {
           $('#custom_styles_local').val('');
         }
     });
+    // Miscellaneous
+    $("#miscellaneous_features_enabled").val(config.tildesExtendedSettings.miscellaneous.enabled);
+    $("input[id^='misc_']").change(() => {
+        $("#miscellaneous_features_enabled").val($("input[id^='misc_']").prop('checked'));
+    });
+    $("#misc_random_tilde_enabled").prop("checked", config.tildesExtendedSettings.miscellaneous.activeFeatures.randomTilde);
+
+    // Update badges
+    updateBadges();
   });
 }
 
 function saveOptions() {
-  setBadges();
   $('#options_save_popover').popover('hide');
   $('.popover-header').removeClass(['success', 'error']);
   const options = {};
@@ -123,6 +137,12 @@ function saveOptions() {
     localCss: $('#custom_styles_local').val(),
     urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
   };
+  options.miscellaneous = {
+    enabled: $("#miscellaneous_features_enabled").val() === 'true',
+    activeFeatures: {
+      randomTilde: $('#misc_random_tilde_enabled').prop("checked")
+    }
+  }
   if (options.customStyles.enabled) {
     if (options.customStyles.urls.length) {
       $('#options_save_popover').attr("data-original-title", 'Info');
@@ -180,6 +200,7 @@ function storeConfig(options) {
   chrome.storage.sync.set({
     tildesExtendedSettings: options
   }, function() {
+    updateBadges();
     clog('Config updated:', options);
     $('#options_save_popover').attr("data-original-title", 'Success');
     $('#options_save_popover').attr("data-content", 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
@@ -211,15 +232,15 @@ function changeSelectedFeature() {
 }
 
 // Toggle enabled badges for the feature list
-function setBadges() {
+function updateBadges() {
   $('#link_new_tab_list>.badge').toggle($('#link_new_tab_enabled').prop("checked"));
   $('#jump_new_comment_list>.badge').toggle($('#jump_new_comment_enabled').prop("checked"));
   $('#markdown_preview_list>.badge').toggle($('#markdown_preview_enabled').prop("checked"));
   $('#users_label_list>.badge').toggle($('#users_label_enabled').prop("checked"));
   $('#sticky_header_list>.badge').toggle($('#sticky_header_enabled').prop("checked"));
   $('#custom_styles_list>.badge').toggle($('#custom_styles_enabled').prop("checked"));
+  $('#miscellaneous_features_list>.badge').toggle($('#miscellaneous_features_enabled').val() === 'true');
 }
 
-$(document).ready(setBadges);
 $('#feature_list>li').on('click', changeSelectedFeature);
 $('#options_save').on('click', saveOptions);
