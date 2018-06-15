@@ -33,7 +33,11 @@
     "run_at": "document_start",
     "js": [
       "scripts/vendors/jquery.min.js",
-      "scripts/custom-styles.js"
+      "scripts/custom-styles.js",
+      "scripts/miscellaneous.js"
+    ],
+    "css": [
+      "styles/miscellaneous.css"
     ]
   },
   {
@@ -45,14 +49,12 @@
       "scripts/jump-to-new-comment.js",
       "scripts/markdown-preview.js",
       "scripts/users-label.js",
-      "scripts/sticky-header.js",
-      "scripts/miscellaneous.js"
+      "scripts/sticky-header.js"
     ],
     "css": [
       "styles/jump-to-new-comment.css",
       "styles/users-label.css",
-      "styles/sticky-header.css",
-      "styles/miscellaneous.css"
+      "styles/sticky-header.css"
     ]
   }],
 
