@@ -5,8 +5,10 @@ chrome.storage.sync.get({
   tildesExtendedSettings: {miscellaneous: {}}
 }, function(res) {
   const miscellaneous = res.tildesExtendedSettings.miscellaneous;
-  if (miscellaneous.randomTilde.enabled) {
-    randomTilde();
+  if (miscellaneous.enabled) {
+    if(miscellaneous.activeFeatures.randomTilde) {
+      randomTilde();
+    }
   }
 })
 

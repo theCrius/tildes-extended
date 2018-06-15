@@ -37,8 +37,9 @@
 					Use Custom Styles
 					<span class="badge">&#x2713;</span>
 				</li>
-				<li id="miscellaneous_features_list" class="list-group-item">
+				<li id="miscellaneous_features_list" class="list-group-item d-flex justify-content-between align-items-center">
 					Miscellaneous
+					<span class="badge">&#x2713;</span>
 				</li>
 			</ul>
 			<span id="options_save_popover" data-toggle="popover" data-placement="bottom">
@@ -117,10 +118,12 @@
 			</div>
 			<div id="miscellaneous_features">
 				<h4>Miscellaneous features</h4>
-				<h5>Random Tilde logo color</h5>
+				<input type="hidden" id="miscellaneous_features_enabled">
+				<hr>
+				<h6>Random Tilde logo color</h6>
 				<div>
-					<input type="checkbox" id="random_tilde_enabled">
-					<label for="random_tilde_enabled">Activate this feature</label>
+					<input type="checkbox" id="misc_random_tilde_enabled">
+					<label for="misc_random_tilde_enabled">Activate this feature</label>
 				</div>
 			</div>
 			<div class="options-notifications">
