@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Tildes Extended",
   "description": "Browsers extension to improve Tildes.net UI/UX",
-  "version": "0.8.4",
+  "version": "0.8.6",
   "homepage_url": "https://github.com/theCrius/tildes-extended",
   "permissions": [
     "tabs",
@@ -33,7 +33,11 @@
     "run_at": "document_start",
     "js": [
       "scripts/vendors/jquery.min.js",
-      "scripts/custom-styles.js"
+      "scripts/custom-styles.js",
+      "scripts/miscellaneous.js"
+    ],
+    "css": [
+      "styles/miscellaneous.css"
     ]
   },
   {
