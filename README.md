@@ -15,8 +15,12 @@ I've positive report of it working on Firefox Mobile and various forks of Chromi
 
 ## How to contribute
 
-This requires [NodeJS](https://nodejs.org/en/) and [npm](http://npmjs.com/).  
-Change into the example directory and run `npm install` to install all dependencies.
+This requires [NodeJS](https://nodejs.org/en/) and [npm](http://npmjs.com/).
+
+Fork the project from the `develop` branch if you want to write a new feature.  
+Fork from `master` if you want to write an hotfix.
+
+Remember to run `npm install` to install all dependencies.
 
 Available npm commands are:
 
