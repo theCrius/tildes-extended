@@ -176,8 +176,9 @@ function saveOptions() {
 function buildStylesheets(urls) {
   try {
     let externalSources = '';
-    // Concatenate all external CSS sources
-    if (urls.length) {
+    //Process only if there is at least one URL
+    if (urls.length && urls[0].length) {
+      // Concatenate all external CSS sources
       for (let i = 0; i < urls.length; i++) {
         const res = $.ajax(urls[i], {'async': false});
         // clog('RES:', res.status, res.responseText)
