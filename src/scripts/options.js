@@ -82,7 +82,7 @@ function loadOptions() {
     // Load Custom Styles
     $('#custom_styles_enabled').prop("checked", config.tildesExtendedSettings.customStyles.enabled);
     $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
-    $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.customCss);
+    $('#custom_styles_local').val(config.tildesExtendedSettings.customStyles.localCss);
     $('#custom_styles_enabled').change(() => {
         if ($('#custom_styles_enabled').is(':checked')) {
           $('#custom_styles_urls').attr('disabled', false);
@@ -92,9 +92,6 @@ function loadOptions() {
         } else {
           $('#custom_styles_urls').attr('disabled', true);
           $('#custom_styles_local').attr('disabled', true);
-
-          $('#custom_styles_urls').val('');
-          $('#custom_styles_local').val('');
         }
     });
     // Miscellaneous
@@ -136,6 +133,7 @@ function saveOptions() {
     enabled: $('#custom_styles_enabled').prop('checked'),
     localCss: $('#custom_styles_local').val(),
     urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
+    source: ''
   };
   options.miscellaneous = {
     enabled: $("#miscellaneous_features_enabled").val() === 'true',
@@ -143,25 +141,23 @@ function saveOptions() {
       randomTilde: $('#misc_random_tilde_enabled').prop("checked")
     }
   }
+
+  //Options updated, getting remote css, if needed, before actually storing the config
   if (options.customStyles.enabled) {
-    if (options.customStyles.urls.length) {
-      $('#options_save_popover').attr("data-original-title", 'Info');
-      $('#options_save_popover').attr("data-content", 'Saving...');
+    $('#options_save_popover').attr("data-original-title", 'Info');
+    $('#options_save_popover').attr("data-content", 'Saving...');
+    $('#options_save_popover').popover('show');
+    //Add external resources
+    const remoteSource = buildStylesheets(options.customStyles.urls);
+    if (remoteSource.type === 'error') {
+      $('#options_save_popover').attr("data-original-title", 'Error');
+      $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :(' + remoteSource.message);
       $('#options_save_popover').popover('show');
-      //Add external resources
-      const remoteSource = buildStylesheets(options.customStyles.urls)
-      if (remoteSource.type === 'error') {
-        $('#options_save_popover').attr("data-original-title", 'Error');
-        $('#options_save_popover').attr("data-content", 'Something went wrong with the CSS :(' + remoteSource.message);
-        $('#options_save_popover').popover('show');
-        $('.popover-header').addClass('error');
-      } else {
-        options.customStyles.source += remoteSource;
-        // Add custom user CSS sources
-        options.customStyles.source += '\r\n\r\n'+ options.customStyles.localCss.length ? options.customStyles.localCss : '';
-        storeConfig(options);
-      }
+      $('.popover-header').addClass('error');
     } else {
+      options.customStyles.source += remoteSource;
+      // Add custom user CSS sources
+      options.customStyles.source += '\r\n\r\n'+ options.customStyles.localCss.length ? options.customStyles.localCss : '';
       storeConfig(options);
     }
   } else {
@@ -202,7 +198,6 @@ function storeConfig(options) {
     tildesExtendedSettings: options
   }, function() {
     updateBadges();
-    clog('Config updated:', options);
     $('#options_save_popover').attr("data-original-title", 'Success');
     $('#options_save_popover').attr("data-content", 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
     $('#options_save_popover').popover('show');
