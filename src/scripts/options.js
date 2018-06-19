@@ -37,6 +37,9 @@ const defaultSettings = {
     activeFeatures: {
       randomTilde: false
     }
+  },
+  keyboardNavigation: {
+    enabled: false
   }
 };
 
@@ -100,6 +103,8 @@ function loadOptions() {
         $("#miscellaneous_features_enabled").val($("input[id^='misc_']").prop('checked'));
     });
     $("#misc_random_tilde_enabled").prop("checked", config.tildesExtendedSettings.miscellaneous.activeFeatures.randomTilde);
+    // Keyboard navigation
+    $("#keyboard_navigation_enabled").prop("checked", config.tildesExtendedSettings.keyboardNavigation.enabled);
 
     // Update badges
     updateBadges();
@@ -140,7 +145,10 @@ function saveOptions() {
     activeFeatures: {
       randomTilde: $('#misc_random_tilde_enabled').prop("checked")
     }
-  }
+  };
+  options.keyboardNavigation = {
+    enabled: $("#keyboard_navigation_enabled").prop("checked")
+  };
 
   //Options updated, getting remote css, if needed, before actually storing the config
   if (options.customStyles.enabled) {
@@ -236,6 +244,7 @@ function updateBadges() {
   $('#sticky_header_list>.badge').toggle($('#sticky_header_enabled').prop("checked"));
   $('#custom_styles_list>.badge').toggle($('#custom_styles_enabled').prop("checked"));
   $('#miscellaneous_features_list>.badge').toggle($('#miscellaneous_features_enabled').val() === 'true');
+  $('#keyboard_navigation_list>.badge').toggle($('#keyboard_navigation_enabled').prop("checked"));
 }
 
 $('#feature_list>li').on('click', changeSelectedFeature);

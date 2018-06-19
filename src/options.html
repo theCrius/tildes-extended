@@ -36,7 +36,11 @@
 				<li id="custom_styles_list" class="list-group-item d-flex justify-content-between align-items-center">
 					Use Custom Styles
 					<span class="badge">&#x2713;</span>
-				</li>
+        </li>
+        <li id="keyboard_navigation_list" class="list-group-item d-flex justify-content-between align-items-center">
+          Keyboard Navigation
+          <span class="badge">&#x2713;</span>
+        </li>
 				<li id="miscellaneous_features_list" class="list-group-item d-flex justify-content-between align-items-center">
 					Miscellaneous
 					<span class="badge">&#x2713;</span>
@@ -115,7 +119,14 @@
 				<div>
 					<textarea cols="50" rows="3" class="mb-2" id="custom_styles_local" placeholder="Enter any additional CSS here."></textarea>
 				</div>
-			</div>
+      </div>
+      <div id="keyboard_navigation">
+        <h4>Keyboard navigation</h4>
+        <div>
+          <input type="checkbox" id="keyboard_navigation_enabled">
+          <label for="keyboard_navigation_enabled">Activate this feature</label>
+        </div>
+      </div>
 			<div id="miscellaneous_features">
 				<h4>Miscellaneous features</h4>
 				<input type="hidden" id="miscellaneous_features_enabled">

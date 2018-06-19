@@ -49,12 +49,14 @@
       "scripts/jump-to-new-comment.js",
       "scripts/markdown-preview.js",
       "scripts/users-label.js",
-      "scripts/sticky-header.js"
+      "scripts/sticky-header.js",
+      "scripts/keyboard-navigation.js"
     ],
     "css": [
       "styles/jump-to-new-comment.css",
       "styles/users-label.css",
-      "styles/sticky-header.css"
+      "styles/sticky-header.css",
+      "styles/keyboard-navigation.css"
     ]
   }],
 
