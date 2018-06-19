@@ -1,14 +1,27 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "webextensions": true
-    },
-    "extends": [
-      "eslint:recommended"
+  "env": {
+    "browser": true,
+    "es6": true,
+    "webextensions": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "rules": {
+    "indent": [
+      "warn",
+      2
     ],
-    "rules": {
-      "no-console": "off",
-      "no-unused-vars": "warn"
-    }
+    "no-console": "off",
+    "no-trailing-spaces": "warn",
+    "no-unused-vars": "warn",
+    "quotes": [
+      "warn",
+      "single"
+    ],
+    "semi": [
+      "warn",
+      "always"
+    ]
+  }
 }
