@@ -19,7 +19,7 @@ chrome.storage.sync.get({
       startObserver();
 
       // Div for edit label mini-form
-      $("body").append(`
+      $('body').append(`
         <div class="label-edit-box" id="label_edit">
           <form>
             <input type="hidden" id="edit_label_id">
@@ -45,19 +45,19 @@ chrome.storage.sync.get({
       `);
 
       // Listener on 'click' for edit-label form
-      $("#edit_label_save").on('click', (e) => updateLabel(e));
-      $("#edit_label_remove").on('click', (e) => removeLabel(e));
-      $("#edit_label_cancel").on('click', (e) => closeEditBox(e));
+      $('#edit_label_save').on('click', (e) => updateLabel(e));
+      $('#edit_label_remove').on('click', (e) => removeLabel(e));
+      $('#edit_label_cancel').on('click', (e) => closeEditBox(e));
     });
   }
 });
 
 function populateLabels($el, labels) {
   // Cleanup previously created labels
-  $el.find("span[id^=TE_label]").remove();
+  $el.find('span[id^=TE_label]').remove();
 
   // Iterate through all users-link
-  $el.find("a[class='link-user']").each( function() {
+  $el.find('a[class=\'link-user\']').each( function() {
     const labelInfo = labels[$(this).text()];
     if(labelInfo) {
       // IF a label exists in local storage THEN Append <span class="user-label bg-COLOR">TEXT</span>
@@ -69,46 +69,46 @@ function populateLabels($el, labels) {
   });
 
   // Determine dark/bright theme and adjusting the css accordingly
-  const foundLabels = $el.find("span[id^=TE_label]");
+  const foundLabels = $el.find('span[id^=TE_label]');
   if (foundLabels.length) {
-    $el.find("span[id^=TE_label]").colourBrightness();
+    $el.find('span[id^=TE_label]').colourBrightness();
   }
 
   // Listener on 'click' for labels
-  $el.find("span[id^=TE_label]").on('click', (e) => editLabel(e));
+  $el.find('span[id^=TE_label]').on('click', (e) => editLabel(e));
 }
 
 function editLabel(e) {
   e.preventDefault();
-  $("#edit_label_id").val(e.currentTarget.id.split('TE_label').slice(-1));
-  const userLabelInfo = labels[$("#edit_label_id").val()];
+  $('#edit_label_id').val(e.currentTarget.id.split('TE_label').slice(-1));
+  const userLabelInfo = labels[$('#edit_label_id').val()];
   if (userLabelInfo) {
-    $("#edit_label_text").val(userLabelInfo.text);
-    $("#edit_label_color").val(userLabelInfo.color);
+    $('#edit_label_text').val(userLabelInfo.text);
+    $('#edit_label_color').val(userLabelInfo.color);
   } else {
-    $("#edit_label_text").val('');
-    $("#edit_label_color").val('bg-none');
+    $('#edit_label_text').val('');
+    $('#edit_label_color').val('bg-none');
   }
 
   $('#label_edit').css({'top':e.pageY - 90,'left':e.pageX + 10});
-  $("#label_edit").show();
-  $("#edit_label_text").focus();
+  $('#label_edit').show();
+  $('#edit_label_text').focus();
 }
 
 function updateLabel(e) {
   e.preventDefault();
-  if ($("#edit_label_text").val() !== '') {
-    labels[$("#edit_label_id").val()] = {
-      text: $("#edit_label_text").val(),
-      color: $("#edit_label_color").val()
+  if ($('#edit_label_text').val() !== '') {
+    labels[$('#edit_label_id').val()] = {
+      text: $('#edit_label_text').val(),
+      color: $('#edit_label_color').val()
     };
     chrome.storage.sync.set({
       tildesExtendedUsersLabels: labels
     }, function() {
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").removeClass();
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").addClass('user-label '+ $("#edit_label_color").val());
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").text($("#edit_label_text").val());
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").colourBrightness();
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').removeClass();
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').addClass('user-label '+ $('#edit_label_color').val());
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').text($('#edit_label_text').val());
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').colourBrightness();
     });
   }
   closeEditBox(e);
@@ -116,15 +116,15 @@ function updateLabel(e) {
 
 function removeLabel(e) {
   e.preventDefault();
-  if (labels[$("#edit_label_id").val()]) {
-    delete labels[$("#edit_label_id").val()];
+  if (labels[$('#edit_label_id').val()]) {
+    delete labels[$('#edit_label_id').val()];
     chrome.storage.sync.set({
       tildesExtendedUsersLabels: labels
     }, function() {
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").removeClass();
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").addClass('user-label bg-none');
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").text('+');
-      $("[id^='TE_label"+ $("#edit_label_id").val() +"']").colourBrightness();
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').removeClass();
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').addClass('user-label bg-none');
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').text('+');
+      $('[id^=\'TE_label'+ $('#edit_label_id').val() +'\']').colourBrightness();
     });
   }
   closeEditBox(e);
@@ -133,7 +133,7 @@ function removeLabel(e) {
 function closeEditBox(e) {
   e.preventDefault();
   // clog('Current labels:', labels);
-  $("#label_edit").hide();
+  $('#label_edit').hide();
 }
 
 // ============== Utils ===============
@@ -142,11 +142,11 @@ function closeEditBox(e) {
 // From https://github.com/jamiebrittain/colourBrightness.js
 $.fn.colourBrightness = function(){
   function getBackgroundColor($el) {
-    let bgColor = "";
+    let bgColor = '';
     if ($el.length) {
-      while($el[0].tagName.toLowerCase() != "html") {
-        bgColor = $el.css("background-color");
-        if(bgColor != "rgba(0, 0, 0, 0)" && bgColor != "transparent") {
+      while($el[0].tagName.toLowerCase() != 'html') {
+        bgColor = $el.css('background-color');
+        if(bgColor != 'rgba(0, 0, 0, 0)' && bgColor != 'transparent') {
           break;
         }
         $el = $el.parent();
@@ -177,9 +177,9 @@ $.fn.colourBrightness = function(){
   brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
   if (brightness < 125) {
-    this.removeClass("label-light").addClass("label-dark");
+    this.removeClass('label-light').addClass('label-dark');
   } else {
-    this.removeClass("label-dark").addClass("label-light");
+    this.removeClass('label-dark').addClass('label-light');
   }
   return this;
 };
@@ -189,7 +189,7 @@ const MutationObserver = window.MutationObserver || window.WebKitMutationObserve
 
 const observer = new MutationObserver(mutations => {
   // Find all comments that were mutated, taking into account only the class "comment-itself"
-  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains("comment-itself"));
+  const elements = mutations.map((m) => m.target).filter(e => e.classList.contains('comment-itself'));
   if (elements.length > 0) {
     // Stop observer to avoid infinite loop before changing it
     observer.disconnect();
@@ -200,7 +200,7 @@ const observer = new MutationObserver(mutations => {
 });
 
 function startObserver() {
-  const el = $(".topic-comments, .post-listing");
+  const el = $('.topic-comments, .post-listing');
   // Run the observer only if there is at least one result
   if (!el.length) return;
 

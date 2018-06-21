@@ -9,10 +9,10 @@ chrome.storage.sync.get({
 
   if(markdownPreview_enabled) {
     // Originally written by avinassh: https://github.com/avinassh
-    $("body").keydown(debounce(function(e) {
+    $('body').keydown(debounce(function(e) {
       // clog($(e.target).val());
       const $targetArea = $(e.target);
-      const $targetParent = $targetArea.parent()
+      const $targetParent = $targetArea.parent();
       if($targetArea[0].name === 'markdown') {
         if (!$targetArea.parent().has('#markdown-preview-div').length) {
           $targetArea.parent().append(`
@@ -38,17 +38,17 @@ chrome.storage.sync.get({
 
 // http://davidwalsh.name/javascript-debounce-function
 function debounce(func, wait, immediate) {
-	let timeout;
-	return function() {
-		let context = this, args = arguments;
-		let later = () => {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		let callNow = immediate && !timeout;
+  let timeout;
+  return function() {
+    let context = this, args = arguments;
+    let later = () => {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    let callNow = immediate && !timeout;
 
     clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
 }
