@@ -1,6 +1,5 @@
 /* globals $ */
 const clog = console.log.bind(console);
-const manifest = chrome.runtime.getURL('manifest.json');
 
 // CORS ANYWHERE pass-through
 $.ajaxPrefilter(function(options) {
@@ -67,6 +66,8 @@ function loadOptions() {
       });
     }
 
+    // Fetch the extension version
+    const manifest = chrome.runtime.getURL('manifest.json');
     fetch(manifest)
       .then(response => response.json())
       .then(manifestJson => {
