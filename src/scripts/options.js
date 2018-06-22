@@ -21,8 +21,9 @@ const defaultSettings = {
   customStyles: {
     enabled: false,
     urls: [],
+    lastPull: null,
     customCss: '',
-    source: ''
+    source: '',
   },
   markdownPreview: {
     enabled: true
@@ -59,10 +60,19 @@ function loadOptions() {
   chrome.storage.sync.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
+    // Store initial config if it's the first installation
     if(config.tildesExtendedSettings.initialSetup) {
       delete config.tildesExtendedSettings.initialSetup;
       chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
-        clog('Initial Config stored:', config.tildesExtendedSettings);
+        clog('[ DEBUG ] Initial Config stored:', config.tildesExtendedSettings);
+      });
+    }
+
+    // Store the lastPull if CustomCss is enabled but no lastPull has been stored (retrocompatibility)
+    if(config.tildesExtendedSettings.customStyles.enabled && !config.tildesExtendedSettings.customStyles.lastPull) {
+      config.tildesExtendedSettings.customStyles.lastPull = new Date().getTime();
+      chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
+        clog('[ CustomCss ] Last Pull Date added:', config.tildesExtendedSettings);
       });
     }
 
@@ -143,6 +153,7 @@ function saveOptions() {
     enabled: $('#custom_styles_enabled').prop('checked'),
     localCss: $('#custom_styles_local').val(),
     urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
+    lastPull: $('#custom_styles_enabled').prop('checked') ? new Date().getTime() : null,
     source: ''
   };
   options.miscellaneous = {
@@ -187,7 +198,6 @@ function buildStylesheets(urls) {
       // Concatenate all external CSS sources
       for (let i = 0; i < urls.length; i++) {
         const res = $.ajax(urls[i], {'async': false});
-        // clog('RES:', res.status, res.responseText)
         if (200 <= res.status && res.status < 300) {
           externalSources += '\r\n\r\n' + res.responseText;
         } else {
@@ -197,7 +207,7 @@ function buildStylesheets(urls) {
     }
     return externalSources;
   } catch(err) {
-    // clog('something wrong in building the styles:', err);
+    clog('[ DEBUG ] something wrong in building the styles:', err);
     return {'type': 'error', 'message': err};
   }
 }
@@ -207,6 +217,7 @@ function storeConfig(options) {
   chrome.storage.sync.set({
     tildesExtendedSettings: options
   }, function() {
+    clog('[ DEBUG ] Options Saved', options)
     updateBadges();
     $('#options_save_popover').attr('data-original-title', 'Success');
     $('#options_save_popover').attr('data-content', 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
