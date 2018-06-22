@@ -74,7 +74,7 @@ button {
 
   &:not(.active) {
     transition: background-color 0.4s;
-  
+
     &:hover {
       cursor: pointer;
       background-color: $selection-hover;
@@ -85,4 +85,8 @@ button {
 
 #features>div:not(.selected) {
   display: none;
+}
+
+#version {
+  font-size: 8pt;
 }

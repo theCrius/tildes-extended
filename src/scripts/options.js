@@ -1,5 +1,6 @@
 /* globals $ */
 const clog = console.log.bind(console);
+const manifest = chrome.runtime.getURL('manifest.json');
 
 // CORS ANYWHERE pass-through
 $.ajaxPrefilter(function(options) {
@@ -10,6 +11,7 @@ $.ajaxPrefilter(function(options) {
 
 const defaultSettings = {
   initialSetup: true,
+  version: '0.0.0',
   linkNewTab: {
     enabled: true,
     types: ['text_submissions_links', 'link_submissions', 'comment_links']
@@ -64,6 +66,13 @@ function loadOptions() {
         clog('Initial Config stored:', config.tildesExtendedSettings);
       });
     }
+
+    fetch(manifest)
+      .then(response => response.json())
+      .then(manifestJson => {
+        $('#version').html(` v${manifestJson.version}`);
+      });
+
     // Link in New Tab
     $('#link_new_tab_enabled').prop('checked', config.tildesExtendedSettings.linkNewTab.enabled);
     $('#link_new_tab_type_text_submissions').prop('checked', config.tildesExtendedSettings.linkNewTab.types.findIndex(i => i === 'text_submissions') !== -1);
