@@ -1,13 +1,6 @@
 /* globals $ */
 const clog = console.log.bind(console);
 
-// CORS ANYWHERE pass-through
-$.ajaxPrefilter(function(options) {
-  if (options.crossDomain && $.support.cors) {
-    options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
-  }
-});
-
 const defaultSettings = {
   initialSetup: true,
   version: '0.0.0',
@@ -191,14 +184,16 @@ function buildFromRemoteCss(customStyles) {
   return new Promise((resolve, reject) => {
     // Check if there are URL to pull down
     if (customStyles.urls.length && customStyles.urls[0].length) {
-      const fetchList = customStyles.urls.map(url => $.ajax(url));
+      const fetchList = customStyles.urls.map(url => fetch('https://cors-anywhere.herokuapp.com/' + url).then(res => res.text()));
       Promise.all(fetchList)
-        .then(data => {
+        .then(cssArray => {
+          // clog('[ DEBUG ] Array of CSS', cssArray);
           customStyles.lastPull = new Date().getTime();
-          customStyles.source = data.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
+          customStyles.source = cssArray.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
           resolve(customStyles);
         })
         .catch(err => {
+          clog('[ ERROR ]', err);
           reject(`(${err.status}) ${err.statusText}`);
         });
     } else {

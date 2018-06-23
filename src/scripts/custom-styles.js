@@ -1,13 +1,6 @@
 /* globals $ */
 const clog = console.log.bind(console);
 
-// CORS ANYWHERE pass-through
-$.ajaxPrefilter(function(options) {
-  if (options.crossDomain && $.support.cors) {
-    options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
-  }
-});
-
 chrome.storage.sync.get({
   tildesExtendedSettings: { customStyles: {} }
 }, (res) => {
@@ -59,11 +52,11 @@ function updatedCssSource(customStyles) {
       const oneDayInMs = 86400000;
       // Check if a day has passed (today > last time pulled +24h)
       if (new Date().getTime() > customStyles.lastPull + oneDayInMs) {
-        const fetchList = customStyles.urls.map(url => $.ajax(url));
+        const fetchList = customStyles.urls.map(url => fetch('https://cors-anywhere.herokuapp.com/' + url).then(res => res.text()));
         Promise.all(fetchList)
-          .then(data => {
+          .then(cssArray => {
             customStyles.lastPull = new Date().getTime();
-            customStyles.source = data.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
+            customStyles.source = cssArray.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
             resolve(customStyles);
           })
           .catch(err => {

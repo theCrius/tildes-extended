@@ -7,6 +7,7 @@
   "permissions": [
     "tabs",
     "storage",
+    "*://cors-anywhere.herokuapp.com.com/*",
     "*://tildes.net/*",
     "*://*.tildes.net/*"
   ],
