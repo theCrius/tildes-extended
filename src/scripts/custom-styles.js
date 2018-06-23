@@ -57,8 +57,8 @@ function updatedCssSource(customStyles) {
     // Check if there are URL to pull down
     if(customStyles.urls.length && customStyles.urls[0].length) {
       const oneDayInMs = 86400000;
-      // Check if a day has passed
-      if (new Date().getTime() < customStyles.lastPull + oneDayInMs) {
+      // Check if a day has passed (today > last time pulled +24h)
+      if (new Date().getTime() > customStyles.lastPull + oneDayInMs) {
         const fetchList = customStyles.urls.map(url => $.ajax(url));
         Promise.all(fetchList)
           .then(data => {
@@ -70,7 +70,6 @@ function updatedCssSource(customStyles) {
             reject(err);
           });
       } else {
-        // Do not trigger an update for the last time we pulled the source
         resolve(false);
       }
     } else {
