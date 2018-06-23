@@ -184,17 +184,27 @@ function buildFromRemoteCss(customStyles) {
   return new Promise((resolve, reject) => {
     // Check if there are URL to pull down
     if (customStyles.urls.length && customStyles.urls[0].length) {
-      const fetchList = customStyles.urls.map(url => fetch('https://cors-anywhere.herokuapp.com/' + url).then(res => res.text()));
+      const fetchList = customStyles.urls.map(url => fetch('https://cors-anywhere.herokuapp.com/' + url));
       Promise.all(fetchList)
-        .then(cssArray => {
-          // clog('[ DEBUG ] Array of CSS', cssArray);
-          customStyles.lastPull = new Date().getTime();
-          customStyles.source = cssArray.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
-          resolve(customStyles);
-        })
-        .catch(err => {
-          clog('[ ERROR ]', err);
-          reject(`(${err.status}) ${err.statusText}`);
+        .then(response => {
+          // clog('[ DEBUG ] Response fetch.all()', response);
+          const fetchAll = response.filter(res => res.status >= 400);
+          if(fetchAll.length) {
+            clog('[ ERROR ] fetchAll Response', response);
+            reject(`(${fetchAll[0].status}) ${fetchAll[0].statusText}`);
+          } else {
+            Promise.all(response.map(res => res.text()))
+              .then(cssArray => {
+                // clog('[ DEBUG ] Array of CSS', cssArray);
+                customStyles.lastPull = new Date().getTime();
+                customStyles.source = cssArray.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
+                resolve(customStyles);
+              })
+              .catch(err => {
+                clog('[ ERROR ] Reading Responses Body:', err);
+                reject(`(${err.status}) ${err.statusText}`);
+              });
+          }
         });
     } else {
       customStyles.lastPull = null;
