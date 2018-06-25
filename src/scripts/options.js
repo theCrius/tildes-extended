@@ -1,13 +1,6 @@
 /* globals $ */
 const clog = console.log.bind(console);
 
-// CORS ANYWHERE pass-through
-$.ajaxPrefilter(function(options) {
-  if (options.crossDomain && $.support.cors) {
-    options.url = 'https://cors-anywhere.herokuapp.com/' + options.url;
-  }
-});
-
 const defaultSettings = {
   initialSetup: true,
   version: '0.0.0',
@@ -21,8 +14,9 @@ const defaultSettings = {
   customStyles: {
     enabled: false,
     urls: [],
+    lastPull: null,
     customCss: '',
-    source: ''
+    source: '',
   },
   markdownPreview: {
     enabled: true
@@ -59,10 +53,19 @@ function loadOptions() {
   chrome.storage.sync.get({
     tildesExtendedSettings: defaultSettings
   }, function(config) {
+    // Store initial config if it's the first installation
     if(config.tildesExtendedSettings.initialSetup) {
       delete config.tildesExtendedSettings.initialSetup;
       chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
-        clog('Initial Config stored:', config.tildesExtendedSettings);
+        clog('[ DEBUG ] Initial Config stored:', config.tildesExtendedSettings);
+      });
+    }
+
+    // Store the lastPull if CustomCss is enabled but no lastPull has been stored (retrocompatibility)
+    if(config.tildesExtendedSettings.customStyles.enabled && !config.tildesExtendedSettings.customStyles.lastPull) {
+      config.tildesExtendedSettings.customStyles.lastPull = new Date().getTime();
+      chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
+        clog('[ CustomCss ] Last Pull Date added:', config.tildesExtendedSettings);
       });
     }
 
@@ -118,7 +121,7 @@ function loadOptions() {
 
 function saveOptions() {
   $('#options_save_popover').popover('hide');
-  $('.popover-header').removeClass(['success', 'error']);
+  $('.popover-header').removeClass(['success', 'error', 'info']);
   const options = {};
   options.linkNewTab = {
     enabled: $('#link_new_tab_enabled').prop('checked'),
@@ -143,6 +146,7 @@ function saveOptions() {
     enabled: $('#custom_styles_enabled').prop('checked'),
     localCss: $('#custom_styles_local').val(),
     urls: $('#custom_styles_urls').val().replace(/\s/g,'').split(','),
+    lastPull: null,
     source: ''
   };
   options.miscellaneous = {
@@ -155,21 +159,20 @@ function saveOptions() {
   //Options updated, getting remote css, if needed, before actually storing the config
   if (options.customStyles.enabled) {
     $('#options_save_popover').attr('data-original-title', 'Info');
-    $('#options_save_popover').attr('data-content', 'Saving...');
+    $('#options_save_popover').attr('data-content', 'Loading External CSS...');
     $('#options_save_popover').popover('show');
-    //Add external resources
-    const remoteSource = buildStylesheets(options.customStyles.urls);
-    if (remoteSource.type === 'error') {
-      $('#options_save_popover').attr('data-original-title', 'Error');
-      $('#options_save_popover').attr('data-content', 'Something went wrong with the CSS :(' + remoteSource.message);
-      $('#options_save_popover').popover('show');
-      $('.popover-header').addClass('error');
-    } else {
-      options.customStyles.source += remoteSource;
-      // Add custom user CSS sources
-      options.customStyles.source += '\r\n\r\n'+ options.customStyles.localCss.length ? options.customStyles.localCss : '';
-      storeConfig(options);
-    }
+    $('.popover-header').addClass('info');
+    buildFromRemoteCss(options.customStyles)
+      .then(updatedCustomStyle => {
+        options.customStyles = updatedCustomStyle;
+        storeConfig(options);
+      })
+      .catch(err => {
+        $('#options_save_popover').attr('data-original-title', 'Error');
+        $('#options_save_popover').attr('data-content', 'Error Loading external CSS: ' + err);
+        $('#options_save_popover').popover('show');
+        $('.popover-header').addClass('error');
+      });
   } else {
     options.customStyles.source = null;
     storeConfig(options);
@@ -177,29 +180,38 @@ function saveOptions() {
 }
 
 // Reach for remote resources and build the CSS to inject
-// TODO: Use a synchronous approach. Everyone welcome to make this asynchronous
-// TODO: just remember that saveOptions() as well will need to change to support it
-function buildStylesheets(urls) {
-  try {
-    let externalSources = '';
-    //Process only if there is at least one URL
-    if (urls.length && urls[0].length) {
-      // Concatenate all external CSS sources
-      for (let i = 0; i < urls.length; i++) {
-        const res = $.ajax(urls[i], {'async': false});
-        // clog('RES:', res.status, res.responseText)
-        if (200 <= res.status && res.status < 300) {
-          externalSources += '\r\n\r\n' + res.responseText;
-        } else {
-          throw `${urls[i]} returned: ${res.statusText} (${res.status})`;
-        }
-      }
+function buildFromRemoteCss(customStyles) {
+  return new Promise((resolve, reject) => {
+    // Check if there are URL to pull down
+    if (customStyles.urls.length && customStyles.urls[0].length) {
+      const fetchList = customStyles.urls.map(url => fetch('https://cors-anywhere.herokuapp.com/' + url));
+      Promise.all(fetchList)
+        .then(response => {
+          // clog('[ DEBUG ] Response fetch.all()', response);
+          const fetchAll = response.filter(res => res.status >= 400);
+          if(fetchAll.length) {
+            clog('[ ERROR ] fetchAll Response', response);
+            reject(`(${fetchAll[0].status}) ${fetchAll[0].statusText}`);
+          } else {
+            Promise.all(response.map(res => res.text()))
+              .then(cssArray => {
+                // clog('[ DEBUG ] Array of CSS', cssArray);
+                customStyles.lastPull = new Date().getTime();
+                customStyles.source = cssArray.join('\r\n\r\n') +'\r\n\r\n'+ customStyles.localCss;
+                resolve(customStyles);
+              })
+              .catch(err => {
+                clog('[ ERROR ] Reading Responses Body:', err);
+                reject(`(${err.status}) ${err.statusText}`);
+              });
+          }
+        });
+    } else {
+      customStyles.lastPull = null;
+      customStyles.source = customStyles.localCss;
+      resolve(customStyles);
     }
-    return externalSources;
-  } catch(err) {
-    // clog('something wrong in building the styles:', err);
-    return {'type': 'error', 'message': err};
-  }
+  });
 }
 
 // Store in local storage
@@ -207,9 +219,10 @@ function storeConfig(options) {
   chrome.storage.sync.set({
     tildesExtendedSettings: options
   }, function() {
+    clog('[ DEBUG ] Options Saved', options);
     updateBadges();
     $('#options_save_popover').attr('data-original-title', 'Success');
-    $('#options_save_popover').attr('data-content', 'Options saved! Be sure to refresh Tildes.net to make the changes go into effect.');
+    $('#options_save_popover').attr('data-content', 'Options saved! Be sure to refresh Tildes.net!.');
     $('#options_save_popover').popover('show');
     $('.popover-header').addClass('success');
     setTimeout(function () {

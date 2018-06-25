@@ -6,6 +6,7 @@ $selection-hover:    #2aa198;
 $selection-active:   #6c71c4;
 $error:              #dc322f;
 $success:            #859900;
+$info:               #2899ef;
 
 body {
   color: $foreground;
@@ -48,6 +49,11 @@ button {
   }
 
   &>h3 {
+    &.info {
+      background-color: $info;
+      border-color: $info;
+    }
+    
     &.error {
       background-color: $error;
       border-color: $error;
