@@ -12,7 +12,7 @@ chrome.storage.sync.get({
   $('a').on('click', function() {
     if (linkNewTab_enabled) {
       if(linkNewTab_type.findIndex(t => t === 'text_submissions') !== -1) {
-        if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf("http") === -1) {
+        if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf('http') === -1) {
           // clog('text_submissions');
           $(this).attr('target', '_blank');
         }
@@ -24,7 +24,7 @@ chrome.storage.sync.get({
         }
       }
       if(linkNewTab_type.findIndex(t => t === 'link_submissions') !== -1) {
-        if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf("http") !== -1) {
+        if($(this).parent().hasClass('topic-title') && $(this).attr('href').indexOf('http') !== -1) {
           // clog('link_submissions');
           $(this).attr('target', '_blank');
         }

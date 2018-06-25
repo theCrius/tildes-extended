@@ -18,32 +18,32 @@ chrome.storage.sync.get({
 function scrollListener() {
   $(window).on('scroll', () => {
     if(inTopic) {
-      const $opMessage = $(".topic-full-text").length ? $(".topic-full-text") : $(".topic-full-link");
+      const $opMessage = $('.topic-full-text').length ? $('.topic-full-text') : $('.topic-full-link');
       if ($(window).scrollTop() > $opMessage.outerHeight()) {
-        $("#site-header").addClass('TE-sticky-header');
-        $("#site-header").css('background-color', $("body").css('background-color'));
-        let $appendAfterMe = $(".site-header-context").length ? $(".site-header-context") : $(".site-header-logo");
-        if (!$("#TE_topic_title").length) {
+        $('#site-header').addClass('TE-sticky-header');
+        $('#site-header').css('background-color', $('body').css('background-color'));
+        let $appendAfterMe = $('.site-header-context').length ? $('.site-header-context') : $('.site-header-logo');
+        if (!$('#TE_topic_title').length) {
           $appendAfterMe.after(`<h3 id="TE_topic_title" class="TE-topic-title">${$('h1').text()}</h3>`);
-          $(".logged-in-user-info").addClass('TE-user-info');
-          $("main").css('padding-top', $("header").outerHeight());
+          $('.logged-in-user-info').addClass('TE-user-info');
+          $('main').css('padding-top', $('header').outerHeight());
         }
       } else {
-        $("#site-header").removeClass('TE-sticky-header');
-        $("#site-header").removeAttr('style');
-        $(".logged-in-user-info").removeClass('TE-user-info');
-        $("#TE_topic_title").remove();
-        $("main").removeAttr('style');
+        $('#site-header').removeClass('TE-sticky-header');
+        $('#site-header').removeAttr('style');
+        $('.logged-in-user-info').removeClass('TE-user-info');
+        $('#TE_topic_title').remove();
+        $('main').removeAttr('style');
       }
     } else if (inGroup) {
       if ($(window).scrollTop() > 50) {
-        $("#site-header").addClass('TE-sticky-header');
-        $("#site-header").css('background-color', $("body").css('background-color'));
-        $(".logged-in-user-info").addClass('TE-user-info');
+        $('#site-header').addClass('TE-sticky-header');
+        $('#site-header').css('background-color', $('body').css('background-color'));
+        $('.logged-in-user-info').addClass('TE-user-info');
       } else {
-        $("#site-header").removeClass('TE-sticky-header');
-        $("#site-header").removeAttr('style');
-        $(".logged-in-user-info").removeClass('TE-user-info');
+        $('#site-header').removeClass('TE-sticky-header');
+        $('#site-header').removeAttr('style');
+        $('.logged-in-user-info').removeClass('TE-user-info');
       }
     }
   });
