@@ -28,14 +28,14 @@
 
 body,
 body.theme-light {
-  .TE_selectedTopic {
+  .TE_selected {
     border: 2px solid rgba(0, 0, 0, 0.3);
   }
 }
 
 body.theme-dark,
 body.theme-black {
-  .TE_selectedTopic {
+  .TE_selected {
     border: 2px solid rgba(255, 255, 255, 0.3);
   }
 }
