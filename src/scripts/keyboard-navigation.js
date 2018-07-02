@@ -17,7 +17,7 @@ $(document).on('keydown', preventMovement);
 function documentReady() {
   $('body').append(modalTemplate);
   $('#TE_keyboardNavModal').on('click', modalOuterClick);
-  if ('.topic-listing>li'.length) {
+  if ($('.topic-listing>li').length) {
     $(`.topic-listing>li:nth-child(${selectedTopic})`).addClass('TE_selected');
     $('html, body').animate({
       scrollTop: $(`.topic-listing>li:nth-child(${selectedTopic})`).offset().top - 250
