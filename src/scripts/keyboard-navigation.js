@@ -1,6 +1,6 @@
 /* globals $ */
 
-const clog = console.log.bind(console);
+// const clog = console.log.bind(console);
 
 const modalTemplate = 
   `<div id="TE_keyboardNavModal">
@@ -34,6 +34,7 @@ let selectedSide = 1;
 let selectedInsideTopic = 1;
 
 function documentKeyUp(e) {
+  if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
   if (e.altKey && e.shiftKey && e.keyCode === 38) {
     $('#TE_keyboardNavModal').css('display', 'block');
     return;
@@ -155,7 +156,6 @@ function navigateTopicListing(keyCode) {
 }
 
 function navigateInsideTopic(keyCode) {
-  clog('nav inside topic', selectedInsideTopic);
   switch(keyCode) {
     // 38 = arrow up, moves selected link inside topic up
     case 38:
@@ -182,10 +182,9 @@ function navigateInsideTopic(keyCode) {
   }
 }
 
-// TODO: when in a textarea/input where you need to type this will make it not work
-// So need to only call this when outside a textarea/input
 function preventMovement(e) {
   if ([32,37,38,39,40].indexOf(e.keyCode) > -1) {
+    if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
     e.preventDefault();
   }
 }
