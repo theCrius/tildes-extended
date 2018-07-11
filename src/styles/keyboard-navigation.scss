@@ -31,11 +31,19 @@ body.theme-light {
   .TE_selected {
     border: 2px solid rgba(0, 0, 0, 0.3) !important;
   }
+
+  .TE_highlighted {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
 }
 
 body.theme-dark,
 body.theme-black {
   .TE_selected {
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .TE_highlighted {
+    background-color: rgba(255, 255, 255, 0.3) !important;
   }
 }

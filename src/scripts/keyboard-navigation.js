@@ -1,6 +1,6 @@
 /* globals $ */
 
-// const clog = console.log.bind(console);
+const clog = console.log.bind(console);
 
 const modalTemplate = 
   `<div id="TE_keyboardNavModal">
@@ -23,11 +23,15 @@ function documentReady() {
       scrollTop: $(`.topic-listing>li:nth-child(${selectedTopic})`).offset().top - 250
     }, 150);
   }
+  if ($('.topic-full-text a').length) {
+    $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+  }
 }
 
 let listingState = 'topic';
 let selectedTopic = 1;
 let selectedSide = 1;
+let selectedInsideTopic = 1;
 
 function documentKeyUp(e) {
   if (e.altKey && e.shiftKey && e.keyCode === 38) {
@@ -39,6 +43,8 @@ function documentKeyUp(e) {
   }
   if ($(`.topic-listing>li:nth-child(${selectedTopic})`).length > 0) {
     navigateTopicListing(e.keyCode);
+  } else if ($('.topic-full-text a').length > 0) {
+    navigateInsideTopic(e.keyCode);
   }
 }
 
@@ -148,6 +154,36 @@ function navigateTopicListing(keyCode) {
   }
 }
 
+function navigateInsideTopic(keyCode) {
+  clog('nav inside topic', selectedInsideTopic);
+  switch(keyCode) {
+    // 38 = arrow up, moves selected link inside topic up
+    case 38:
+      if (selectedInsideTopic <= 1) return;
+      $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+      selectedInsideTopic--;
+      $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+      break;
+    // 40 = arrow down, moves selected link inside topic down
+    case 40:
+      if ($('.topic-full-text a').length === 1) {
+        $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+        $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+        return;
+      }
+      if (selectedInsideTopic >= $('.topic-full-text a').length) return;
+      $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+      selectedInsideTopic++;
+      $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+      break;
+    // 13 = enter/return, goes to whatever link is selected inside the topic text
+    case 13:
+      break;
+  }
+}
+
+// TODO: when in a textarea/input where you need to type this will make it not work
+// So need to only call this when outside a textarea/input
 function preventMovement(e) {
   if ([32,37,38,39,40].indexOf(e.keyCode) > -1) {
     e.preventDefault();
