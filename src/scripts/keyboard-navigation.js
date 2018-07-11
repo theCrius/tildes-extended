@@ -178,6 +178,7 @@ function navigateInsideTopic(keyCode) {
       break;
     // 13 = enter/return, goes to whatever link is selected inside the topic text
     case 13:
+      window.location.href = $($('.topic-full-text a')[selectedInsideTopic - 1]).attr('href');
       break;
   }
 }
