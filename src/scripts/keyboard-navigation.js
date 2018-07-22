@@ -29,9 +29,11 @@ function documentReady() {
 }
 
 let listingState = 'topic';
+let insideState = 'topic';
 let selectedTopic = 1;
 let selectedSide = 1;
 let selectedInsideTopic = 1;
+let selectedComment = 1;
 
 function documentKeyUp(e) {
   if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
@@ -44,8 +46,11 @@ function documentKeyUp(e) {
   }
   if ($(`.topic-listing>li:nth-child(${selectedTopic})`).length > 0) {
     navigateTopicListing(e.keyCode);
-  } else if ($('.topic-full-text a').length > 0) {
+  } else if ($('.topic-full').length > 0) {
     navigateInsideTopic(e.keyCode);
+  }
+  if ($('.topic-full').length > 0 && $('.topic-full-link').length > 0) {
+    insideState = 'comments';
   }
 }
 
@@ -156,30 +161,102 @@ function navigateTopicListing(keyCode) {
 }
 
 function navigateInsideTopic(keyCode) {
-  switch(keyCode) {
-    // 38 = arrow up, moves selected link inside topic up
-    case 38:
-      if (selectedInsideTopic <= 1) return;
-      $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
-      selectedInsideTopic--;
-      $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
-      break;
-    // 40 = arrow down, moves selected link inside topic down
-    case 40:
-      if ($('.topic-full-text a').length === 1) {
+  if (insideState === 'topic') {
+    switch(keyCode) {
+      // 38 = arrow up, moves selected link inside topic up
+      case 38:
+        if (selectedInsideTopic <= 1) return;
         $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+        selectedInsideTopic--;
         $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
-        return;
-      }
-      if (selectedInsideTopic >= $('.topic-full-text a').length) return;
-      $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
-      selectedInsideTopic++;
-      $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
-      break;
-    // 13 = enter/return, goes to whatever link is selected inside the topic text
-    case 13:
-      window.location.href = $($('.topic-full-text a')[selectedInsideTopic - 1]).attr('href');
-      break;
+        break;
+      // 40 = arrow down, moves selected link inside topic down
+      case 40:
+        if ($('.topic-full-text a').length === 1) {
+          $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+          $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+          return;
+        }
+        if (selectedInsideTopic >= $('.topic-full-text a').length) return;
+        $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+        selectedInsideTopic++;
+        $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+        break;
+      // 13 = enter/return, goes to whatever link is selected inside the topic text
+      case 13:
+        window.location.href = $($('.topic-full-text a')[selectedInsideTopic - 1]).attr('href');
+        break;
+      // 67 = c, switch from topic text to comments
+      case 67:
+        $($('.topic-full-text a')[selectedInsideTopic - 1]).removeClass('TE_highlighted');
+        insideState = 'comments';
+        $($('.comment-itself')[selectedComment - 1]).addClass('TE_selected');
+        break;
+    }
+  } else {
+    switch (keyCode) {
+      // 38 = arrow up, moves selected comment inside topic up
+      case 38:
+        if (selectedComment <= 1) return;
+        $($('.comment-itself')[selectedComment - 1]).removeClass('TE_selected');
+        selectedComment--;
+        $($('.comment-itself')[selectedComment - 1]).addClass('TE_selected');
+        break;
+      // 40 = arrow down, moves selected comment inside topic down
+      case 40:
+        if (selectedComment === $('.comment-itself').length) return;
+        $($('.comment-itself')[selectedComment - 1]).removeClass('TE_selected');
+        selectedComment++;
+        $($('.comment-itself')[selectedComment - 1]).addClass('TE_selected');
+        break;
+      // 68 = d, clicks on the delete button
+      case 68:
+        if($('.comment-itself.TE_selected').parent('.is-comment-mine').length) {
+          for (const child of $('.comment-itself.TE_selected>.post-buttons>li>a')) {
+            if (child.innerText === 'Delete') child.click();
+          }
+        }
+        break;
+      // 69 = e, clicks on the edit button
+      case 69:
+        if($('.comment-itself.TE_selected').parent('.is-comment-mine').length) {
+          for (const child of $('.comment-itself.TE_selected>.post-buttons>li>a')) {
+            if (child.innerText === 'Edit') child.click();
+          }
+        }
+        break;
+      // 82 = r, clicks on the reply button
+      case 82:
+        for (const child of $('.comment-itself.TE_selected>.post-buttons>li>a')) {
+          if (child.innerText === 'Reply') child.click();
+        }
+        break;
+      // 86 = v, clicks on the vote button
+      case 86:
+        if($('.comment-itself.TE_selected').parent('.is-comment-mine').length === 0) {
+          for (const child of $('.comment-itself.TE_selected>.post-buttons>li>a')) {
+            if (child.innerText.startsWith('Vote')) child.click();
+          }
+        }
+        break;
+      // 84 = t, switches back to the topic
+      case 84:
+        // If the topic isn't a text topic (like an external link) then we shouldn't switch
+        if ($('.topic-full-text').length === 0) return;
+        $($('.topic-full-text a')[selectedInsideTopic - 1]).addClass('TE_highlighted');
+        insideState = 'topic';
+        $($('.comment-itself')[selectedComment - 1]).removeClass('TE_selected');
+        break;
+    }
+  }
+  if (insideState === 'topic') {
+    $('html, body').animate({
+      scrollTop: $($('.topic-full-text a')[selectedInsideTopic - 1]).offset().top - 250
+    }, 150);
+  } else {
+    $('html, body').animate({
+      scrollTop: $('.comment-itself.TE_selected').offset().top - 250
+    }, 150);
   }
 }
 
