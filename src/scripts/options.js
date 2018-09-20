@@ -27,6 +27,12 @@ const defaultSettings = {
   stickyHeader: {
     enabled: true
   },
+  viewOnOutline: {
+    enabled: true,
+    blacklist: [
+      'tildes.net', 'youtube.com', 'youtu.be', 'vimeo.com', 'song.link', 'reddit.com', 'twitter.com', 'facebook.com'
+    ]
+  },
   miscellaneous: {
     enabled: false,
     activeFeatures: {
@@ -92,6 +98,9 @@ function loadOptions() {
     $('#users_label_enabled').prop('checked', config.tildesExtendedSettings.usersLabel.enabled);
     // Sticky Header
     $('#sticky_header_enabled').prop('checked', config.tildesExtendedSettings.stickyHeader.enabled);
+    // View on Outline.com
+    $('#view_on_outline_enabled').prop('checked', config.tildesExtendedSettings.viewOnOutline.enabled);
+    $('#view_on_outline_blacklist').val(config.tildesExtendedSettings.viewOnOutline.blacklist.join(', '));
     // Load Custom Styles
     $('#custom_styles_enabled').prop('checked', config.tildesExtendedSettings.customStyles.enabled);
     $('#custom_styles_urls').val(config.tildesExtendedSettings.customStyles.urls.join(', '));
@@ -141,6 +150,10 @@ function saveOptions() {
   };
   options.stickyHeader = {
     enabled: $('#sticky_header_enabled').prop('checked')
+  };
+  options.viewOnOutline = {
+    enabled: $('#view_on_outline_enabled').prop('checked'),
+    blacklist: $('#view_on_outline_blacklist').val().replace(/\s/g, '').split(',')
   };
   options.customStyles = {
     enabled: $('#custom_styles_enabled').prop('checked'),
@@ -257,6 +270,7 @@ function updateBadges() {
   $('#markdown_preview_list>.badge').toggle($('#markdown_preview_enabled').prop('checked'));
   $('#users_label_list>.badge').toggle($('#users_label_enabled').prop('checked'));
   $('#sticky_header_list>.badge').toggle($('#sticky_header_enabled').prop('checked'));
+  $('#view_on_outline_list>.badge').toggle($('#view_on_outline_enabled').prop('checked'));
   $('#custom_styles_list>.badge').toggle($('#custom_styles_enabled').prop('checked'));
   $('#miscellaneous_features_list>.badge').toggle($('#miscellaneous_features_enabled').val() === 'true');
 }
