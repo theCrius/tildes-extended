@@ -2,31 +2,29 @@
   "name": "tildes-extended",
   "version": "0.9.0",
   "description": "Collection of QoL features for Tildes.net",
-  "main": "index.js",
-  "devDependencies": {
-    "del": "latest",
-    "eslint": "latest",
-    "gulp": "latest",
-    "gulp-cleanhtml": "latest",
-    "gulp-eslint": "latest",
-    "gulp-sass": "latest",
-    "gulp-strip-debug": "latest",
-    "gulp-uglify-es": "latest",
-    "gulp-zip": "latest"
-  },
+  "author": "Claudio Vallesi",
+  "license": "ISC",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint .",
+    "lint": "eslint src/**/*.js",
     "serve": "gulp watch --debug-scripts",
     "serve:build": "gulp watch",
     "build": "gulp"
   },
-  "author": "Claudio Vallesi",
-  "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.1.1",
     "jquery": "^3.3.1",
     "marked": "^0.4.0",
     "popper.js": "^1.14.3"
+  },
+  "devDependencies": {
+    "del": "^3.0.0",
+    "eslint": "^5.8.0",
+    "gulp": "^3.9.1",
+    "gulp-cleanhtml": "^1.0.3",
+    "gulp-eslint": "^5.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-strip-debug": "^3.0.0",
+    "gulp-uglify-es": "^1.0.4",
+    "gulp-zip": "^4.2.0"
   }
 }
