@@ -69,12 +69,7 @@ function loadOptions() {
       });
     }
 
-    // Fetch the extension version
-    const manifest = chrome.runtime.getURL('manifest.json');
-    fetch(manifest)
-      .then(response => {
-        $('#version').html(` v${response.json().version}`);
-      });
+    $('#version').html(` v${chrome.runtime.getManifest().version}`);
 
     // Link in New Tab
     $('#link_new_tab_enabled').prop('checked', config.tildesExtendedSettings.linkNewTab.enabled);
