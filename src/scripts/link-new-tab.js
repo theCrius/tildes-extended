@@ -1,8 +1,13 @@
 /* globals $ */
 // const clog = console.log.bind(console);
 
+// TODO: Remove this feature since it's supported natively:
+// https://tildes.net/~tildes.official/43j
+// The only part of this that isn't supported natively is opening users
+// in a new tab but I don't think that needs stay.
+
 chrome.storage.sync.get({
-  tildesExtendedSettings: {linkNewTab: {}}
+  tildesExtendedSettings: { linkNewTab: {} }
 }, function(res) {
   // clog(res);
   const linkNewTab_enabled = res.tildesExtendedSettings.linkNewTab.enabled;

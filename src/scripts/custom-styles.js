@@ -8,7 +8,6 @@ chrome.storage.sync.get({
   const customStyles_enabled = res.tildesExtendedSettings.customStyles.enabled;
 
   if (customStyles_enabled) {
-
     let customStyles_source = res.tildesExtendedSettings.customStyles.source;
     applyStyles(customStyles_source);
 
@@ -29,7 +28,6 @@ chrome.storage.sync.get({
         // TODO: Should notify with a popup?
         clog('[ ERROR ] Cannot update remote custom styles', err);
       });
-
   } else {
     // No idea why atm, but even with the feature disabled, the style injected survive a reload. This force it to be removed.
     $('#customStylesheet').remove();

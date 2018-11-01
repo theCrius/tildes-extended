@@ -3,7 +3,7 @@
 let labels = {};
 
 chrome.storage.sync.get({
-  tildesExtendedSettings: {usersLabel: {}}
+  tildesExtendedSettings: { usersLabel: {} }
 }, function(res) {
   // clog(res);
   const usersLabel_enabled = res.tildesExtendedSettings.usersLabel.enabled;
