@@ -1,0 +1,7 @@
+{
+  "extends": "stylelint-config-recommended",
+  "rules": {
+    "indentation": 2,
+    "string-quotes": "single"
+  }
+}

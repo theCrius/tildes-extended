@@ -1,104 +1,126 @@
 /* eslint-env node */
 
-'use strict';
+const
+  htmlClean  = require('gulp-htmlclean'),
+  del        = require('del'),
+  eslint     = require('gulp-eslint'),
+  gulp       = require('gulp'),
+  merge2     = require('merge2'),
+  scss       = require('gulp-sass'),
+  stripDebug = require('gulp-strip-debug'),
+  stylelint  = require('gulp-stylelint'),
+  uglify     = require('gulp-uglify-es').default,
+  zip        = require('gulp-zip');
 
-const gulp = require('gulp'),
-  del = require('del'),
-  cleanhtml = require('gulp-cleanhtml'),
-  eslint = require('gulp-eslint'),
-  stripdebug = require('gulp-strip-debug'),
-  uglify = require('gulp-uglify-es').default,
-  sass = require('gulp-sass'),
-  zip = require('gulp-zip');
+function cleanDist() {
+  return del('dist/**/*');
+}
 
-const distFolder = 'dist';
+function buildHTML() {
+  return gulp
+    .src('src/*.html')
+    .pipe(htmlClean())
+    .pipe(gulp.dest('dist/'));
+}
 
-//clean build directory
-gulp.task('clean', function () {
-  return del.sync('./' + distFolder + '/**/*');
-});
+function buildCSS() {
+  return gulp
+    .src('src/styles/**/*.scss')
+    .pipe(scss({ outputStyle: 'compressed' }))
+    .pipe(gulp.dest('dist/styles/'));
+}
 
-//copy static folders to build directory
-gulp.task('copy', function() {
-  // gulp.src('src/fonts/**/*')
-  // 	.pipe(gulp.dest('./' + distFolder + '/fonts'));
-  gulp.src('src/data/**')
-    .pipe(gulp.dest('./' + distFolder + '/data'));
-  gulp.src('src/images/**')
-    .pipe(gulp.dest('./' + distFolder + '/images'));
-  return gulp.src('src/manifest.json')
-    .pipe(gulp.dest('./' + distFolder));
-});
+function buildJS() {
+  return gulp
+    .src('src/scripts/*.js')
+    .pipe(stripDebug())
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/scripts/'));
+}
 
-//copy and compress HTML files
-gulp.task('html', function() {
-  return gulp.src('src/*.html')
-    .pipe(cleanhtml())
-    .pipe(gulp.dest('./' + distFolder));
-});
+function buildExtras() {
+  // Merge2 merges multiple streams and returns it as one, this allows us to
+  // use Gulp's async task completion without having to make multiple tasks for
+  // the different locations for a number of static files.
+  // https://gulpjs.com/docs/en/getting-started/async-completion#returning-a-stream
+  return merge2(
+    gulp // JavaScript Vendors:
+      .src([
+        'node_modules/marked/marked.min.js',
+        'node_modules/jquery/dist/jquery.min.js',
+        'node_modules/popper.js/dist/umd/popper.min.js',
+        'node_modules/bootstrap/dist/js/bootstrap.min.js'
+      ])
+      .pipe(gulp.dest('dist/scripts/vendors/')),
+    gulp // CSS Vendors:
+      .src('node_modules/bootstrap/dist/css/bootstrap.min.css')
+      .pipe(gulp.dest('dist/styles/vendors/')),
+    gulp // Data folder:
+      .src('src/data/**')
+      .pipe(gulp.dest('dist/data/')),
+    gulp // Images folder:
+      .src('src/images/**')
+      .pipe(gulp.dest('dist/images/')),
+    gulp // Manifest file:
+      .src('src/manifest.json')
+      .pipe(gulp.dest('dist/'))
+  );
+}
 
-// Check with eslint that everything is fine in the extension's code
-gulp.task('eslint', () => {
-  return gulp.src([
-    'src/scripts/*.js',
-    'src/scripts/**/*.js',
-    '!node_modules/**'
-  ])
+function lintSCSS() {
+  return gulp
+    .src('src/**/*.scss')
+    .pipe(stylelint({ reporters: [{ formatter: 'string', console: true }] }));
+}
+
+function lintJS() {
+  return gulp
+    .src(['src/**/*.js', 'gulpfile.js'])
     .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-});
+    .pipe(eslint.format());
+}
 
-//copy vendor scripts and uglify all other scripts, creating source maps
-gulp.task('scripts', ['eslint'], function() {
-  gulp.src([
-    './node_modules/jquery/dist/jquery.min.js',
-    './node_modules/marked/marked.min.js',
-    './node_modules/popper.js/dist/umd/popper.min.js',
-    './node_modules/bootstrap/dist/js/bootstrap.min.js'
-  ]).pipe(gulp.dest('./' + distFolder + '/scripts/vendors'));
+function createZip() {
+  const manifest = require('./src/manifest.json');
+  const zipName = `${manifest.name} v${manifest.version}.zip`;
+  return gulp
+    .src('dist/**')
+    .pipe(zip(zipName))
+    .pipe(gulp.dest('dist/'));
+}
 
-  let task = gulp.src('src/scripts/*.js').pipe(stripdebug());
-  if (process.argv[3] !== '--debug-scripts') {
-    task = task.pipe(uglify());
-  }
-  return task.pipe(gulp.dest('./' + distFolder + '/scripts'));
-});
+function watch() {
+  const watchOptions = {
+    ignoreInitial: false
+  };
 
-//minify styles
-gulp.task('styles', function() {
-  gulp.src([
-    './node_modules/bootstrap/dist/css/bootstrap.min.css'
-  ]).pipe(gulp.dest('./' + distFolder + '/styles/vendors'));
+  gulp.watch('src/*.html', watchOptions, buildHTML);
+  gulp.watch('src/styles/*.scss', watchOptions, gulp.series(lintSCSS, buildCSS));
+  gulp.watch('src/scripts/*.js', watchOptions, gulp.series(lintJS, buildJS));
+  gulp.watch([
+    'src/data/**',
+    'src/images/**',
+    'src/manifest.json'
+  ], watchOptions, buildExtras);
+}
 
-  return gulp.src('./src/styles/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./' + distFolder + '/styles'));
-});
-
-//build ditributable and sourcemaps after other tasks completed
-gulp.task('zip', ['html', 'scripts', 'styles', 'copy'], function() {
-  var manifest = require('./src/manifest'),
-    distFileName = manifest.name + ' v' + manifest.version + '.zip',
-    mapFileName = manifest.name + ' v' + manifest.version + '-maps.zip';
-  //collect all source maps
-  gulp.src('./' + distFolder + '/scripts/**/*.map')
-    .pipe(zip(mapFileName))
-    .pipe(gulp.dest('./' + distFolder));
-  //build distributable extension
-  return gulp.src(['./' + distFolder + '/**', '!./' + distFolder + '/scripts/**/*.map'])
-    .pipe(zip(distFileName))
-    .pipe(gulp.dest('./' + distFolder));
-});
-
-//run all tasks after build directory has been cleaned
-gulp.task('default', ['clean'], function() {
-  gulp.start('zip');
-});
-
-gulp.task('watch', ['clean', 'copy', 'html', 'scripts', 'styles'], function() {
-  gulp.watch('src/manifest.json', ['copy']);
-  gulp.watch('src/*.html', ['html']);
-  gulp.watch(['src/scripts/*.js', 'src/scripts/**/*.js'], ['eslint', 'scripts']);
-  gulp.watch('src/styles/**', ['styles']);
-});
+// If you want to run any individual task you can use `npx gulp <task_name>`
+// like: `npx gulp lint:scss` or `npx gulp build`
+// Run `npx gulp --tasks` to see a graph of the tasks, a very useful tool!
+exports['build'] =
+  gulp.series(
+    cleanDist,
+    gulp.parallel(lintSCSS, lintJS),
+    gulp.parallel(buildHTML, buildCSS, buildJS, buildExtras),
+    createZip
+  );
+exports['build:html']   = buildHTML;
+exports['build:css']    = buildCSS;
+exports['build:js']     = buildJS;
+exports['build:extras'] = buildExtras;
+exports['clean']        = cleanDist;
+exports['lint']         = gulp.parallel(lintSCSS, lintJS);
+exports['lint:scss']    = lintSCSS;
+exports['lint:js']      = lintJS;
+exports['watch']        = gulp.series(cleanDist, watch);
+exports['zip']          = createZip;
