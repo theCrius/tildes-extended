@@ -2,7 +2,7 @@
 // const clog = console.log.bind(console);
 
 chrome.storage.sync.get({
-  tildesExtendedSettings: {jumpToNewComment: {}}
+  tildesExtendedSettings: { jumpToNewComment: {} }
 }, function(res) {
   // clog(res);
   const jumpToNewComment_enabled = res.tildesExtendedSettings.jumpToNewComment.enabled;

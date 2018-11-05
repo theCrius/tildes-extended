@@ -2,7 +2,7 @@
 // const clog = console.log.bind(console);
 
 chrome.storage.sync.get({
-  tildesExtendedSettings: {miscellaneous: {}}
+  tildesExtendedSettings: { miscellaneous: {} }
 }, function(res) {
   const miscellaneous = res.tildesExtendedSettings.miscellaneous;
   if (miscellaneous.enabled) {

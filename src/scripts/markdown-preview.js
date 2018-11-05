@@ -1,7 +1,7 @@
 /* globals $, marked */
 
 chrome.storage.sync.get({
-  tildesExtendedSettings: {linkNewTab: {}}
+  tildesExtendedSettings: { markdownPreview: {} }
 }, function(res) {
   // const clog = console.log.bind(console);
   // clog(res);

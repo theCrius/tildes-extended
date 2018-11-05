@@ -1,13 +1,13 @@
 /* globals $ */
 // const clog = console.log.bind(console);
 
-//Can find Id of a topic
+// Can find ID of a topic
 const inTopic = (!!window.location.pathname.split('/')[2]);
-// Can find name of a group but not an Id of a topic
+// Can find name of a group but not an ID of a topic
 const inGroup = (window.location.pathname.split('/')[1] !== '') && (!window.location.pathname.split('/')[2]);
 
 chrome.storage.sync.get({
-  tildesExtendedSettings: {fixedHeader: {}}
+  tildesExtendedSettings: { fixedHeader: {} }
 }, function(res) {
   // clog(res);
   if(res.tildesExtendedSettings.stickyHeader.enabled) {

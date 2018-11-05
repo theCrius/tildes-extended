@@ -56,9 +56,9 @@ function loadOptions() {
     // Store initial config if it's the first installation
     if(config.tildesExtendedSettings.initialSetup) {
       delete config.tildesExtendedSettings.initialSetup;
-      chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
-        clog('[ DEBUG ] Initial Config stored:', config.tildesExtendedSettings);
-      });
+      // chrome.storage.sync.set({ tildesExtendedSettings: config.tildesExtendedSettings}, () => {
+      //   clog('[ DEBUG ] Initial Config stored:', config.tildesExtendedSettings);
+      // });
     }
 
     // Store the lastPull if CustomCss is enabled but no lastPull has been stored (retrocompatibility)
@@ -69,13 +69,7 @@ function loadOptions() {
       });
     }
 
-    // Fetch the extension version
-    const manifest = chrome.runtime.getURL('manifest.json');
-    fetch(manifest)
-      .then(response => response.json())
-      .then(manifestJson => {
-        $('#version').html(` v${manifestJson.version}`);
-      });
+    $('#version').html(` v${chrome.runtime.getManifest().version}`);
 
     // Link in New Tab
     $('#link_new_tab_enabled').prop('checked', config.tildesExtendedSettings.linkNewTab.enabled);
@@ -156,7 +150,7 @@ function saveOptions() {
     }
   };
 
-  //Options updated, getting remote css, if needed, before actually storing the config
+  // Options updated, getting remote css if needed before actually storing the config
   if (options.customStyles.enabled) {
     $('#options_save_popover').attr('data-original-title', 'Info');
     $('#options_save_popover').attr('data-content', 'Loading External CSS...');
@@ -219,7 +213,7 @@ function storeConfig(options) {
   chrome.storage.sync.set({
     tildesExtendedSettings: options
   }, function() {
-    clog('[ DEBUG ] Options Saved', options);
+    // clog('[ DEBUG ] Options Saved', options);
     updateBadges();
     $('#options_save_popover').attr('data-original-title', 'Success');
     $('#options_save_popover').attr('data-content', 'Options saved! Be sure to refresh Tildes.net!.');
