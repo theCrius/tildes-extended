@@ -24,7 +24,7 @@ function scrollListener() {
         $('#site-header').css('background-color', $('body').css('background-color'));
         let $appendAfterMe = $('.site-header-context').length ? $('.site-header-context') : $('.site-header-logo');
         if (!$('#TE_topic_title').length) {
-          $appendAfterMe.after(`<h3 id="TE_topic_title" class="TE-topic-title">${$('h1').text()}</h3>`);
+          $appendAfterMe.after(`<h3 id="TE_topic_title" class="TE-topic-title">${$('.topic-full>header>h1').text()}</h3>`);
           $('.logged-in-user-info').addClass('TE-user-info');
           $('main').css('padding-top', $('header').outerHeight());
         }
