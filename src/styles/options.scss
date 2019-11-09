@@ -13,6 +13,7 @@ body {
   background-color: $background;
 }
 
+input[type="text"],
 textarea {
   border: 2px solid $background;
   color: $foreground;
