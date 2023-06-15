@@ -1,0 +1,18 @@
+.VOO-link {
+    background-color: #ebebeb;
+    border-radius: 10%;
+    border: 1px solid #141414;
+    display: inline-block;
+    height: 14px;
+    text-align: center;
+    vertical-align: middle;
+    width: 14px;
+
+    svg {
+        height: 12px;
+        width: 12px;
+        padding: 0;
+        padding-top: 2px;
+        vertical-align: top;
+    }
+}

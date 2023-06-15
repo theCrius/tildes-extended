@@ -37,6 +37,10 @@
 					Sticky Header
 					<span class="badge">&#x2713;</span>
 				</li>
+				<li id="view_on_outline_list" class="list-group-item d-flex justify-content-between align-items-center">
+					View on Outline.com
+					<span class="badge">&#x2713;</span>
+				</li>
 				<li id="custom_styles_list" class="list-group-item d-flex justify-content-between align-items-center">
 					Use Custom Styles
 					<span class="badge">&#x2713;</span>
@@ -105,6 +109,23 @@
 				<div>
 					<input type="checkbox" id="sticky_header_enabled">
 					<label for="sticky_header_enabled">Activate this feature</label>
+				</div>
+			</div>
+			<div id="view_on_outline">
+				<h4>View on Outline.com</h4>
+				<p>
+					Opens links on <a href="https://outline.com">outline.com</a>, a service which formats articles to be easier to 
+					read, strips ads and unncessary content. This setting will respect preference of opening links in new tab/windows.
+				</p>
+				<div>
+					<input type="checkbox" id="view_on_outline_enabled">
+					<label for="view_on_outline_enabled">Activate this feature</label>
+				</div>
+				<div>
+					<h4 class="mt-3">Blacklist domains (comma separated)</h4>
+					<div>
+						<input type="text" id="view_on_outline_blacklist" class="form-control">
+					</div>
 				</div>
 			</div>
 			<div id="custom_styles">
